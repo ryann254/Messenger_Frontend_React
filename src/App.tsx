@@ -14,7 +14,7 @@ function App() {
   const chat = document.getElementById('chat') as HTMLDivElement;
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [userContent, setUserContent] = useState<IUserContent>({
-    name: 'Ryan',
+    name: 'Edward.Green58',
     message: '',
   });
 
@@ -48,48 +48,48 @@ function App() {
     };
   }, [isConnected, socket]);
 
-  const generatePassword = (length = 8) => {
-    // Define the character sets
-    const lowercase = 'abcdefghijklmnopqrstuvwxyz';
-    const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const numbers = '0123456789';
-    const symbols = '!@#$%^&*_';
+  // const generatePassword = (length = 8) => {
+  //   // Define the character sets
+  //   const lowercase = 'abcdefghijklmnopqrstuvwxyz';
+  //   const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  //   const numbers = '0123456789';
+  //   const symbols = '!@#$%^&*_';
 
-    // Combine all character sets
-    const allCharacters = lowercase + uppercase + numbers + symbols;
+  //   // Combine all character sets
+  //   const allCharacters = lowercase + uppercase + numbers + symbols;
 
-    // Ensure the password length is at least 8
-    if (length < 8) {
-      length = 8;
-    }
+  //   // Ensure the password length is at least 8
+  //   if (length < 8) {
+  //     length = 8;
+  //   }
 
-    let password = '';
-    for (let i = 0; i < length; i++) {
-      // Generate a random index within the combined character set
-      const randomIndex = Math.floor(Math.random() * allCharacters.length);
-      // Append the character at the random index to the password
-      password += allCharacters[randomIndex];
-    }
+  //   let password = '';
+  //   for (let i = 0; i < length; i++) {
+  //     // Generate a random index within the combined character set
+  //     const randomIndex = Math.floor(Math.random() * allCharacters.length);
+  //     // Append the character at the random index to the password
+  //     password += allCharacters[randomIndex];
+  //   }
 
-    return password;
-  };
+  //   return password;
+  // };
 
   const sendMessage = async () => {
     if (userContent.message === '') {
       return;
     }
 
-    const randomId = crypto.randomUUID();
     const data = {
       user: {
-        id: randomId,
+        id: '6635e291cdd94f2d13ca1687',
         username: userContent.name,
-        email: `${userContent.name}@gmail.com`,
-        password: generatePassword(),
+        email: 'Mollie_Mayert@example.org',
+        password: 'ryann@254',
       },
       message: {
         sender: userContent.name,
-        recipient: 'Ken chan',
+        recipientId: '6635e266cdd94f2d13ca167b',
+        recipientName: 'Grace_Schuster',
         text: userContent.message,
         sent: false,
       },
