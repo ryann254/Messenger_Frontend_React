@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
+import { IConversation } from './interfaces/convesation';
 
 interface IUserContent {
   name: string;
@@ -7,9 +8,12 @@ interface IUserContent {
 }
 
 function App() {
-  const URL = 'http://localhost:4500';
   // Connect to the io Server.
-  const socket = io(URL);
+  const socket = io(import.meta.env.VITE_BACKEND_URL, {
+    auth: {
+      userId: '6635e291cdd94f2d13ca1687',
+    },
+  });
 
   const chat = document.getElementById('chat') as HTMLDivElement;
   const [isConnected, setIsConnected] = useState(socket.connected);
@@ -17,6 +21,9 @@ function App() {
     name: 'Edward.Green58',
     message: '',
   });
+  // TODO: Create a UI that maps out all the conversations that a user has.
+  const [conversations, setConversations] = useState<IConversation[]>([]);
+  console.log(conversations);
 
   useEffect(() => {
     const onConnect = () => {
@@ -37,8 +44,13 @@ function App() {
       }
     };
 
+    const onConversations = (conversations: IConversation[]) => {
+      setConversations(conversations);
+    };
+
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
+    socket.on('conversations', onConversations);
     socket.on('change', onMessageSent);
 
     return () => {
