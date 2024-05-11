@@ -18,8 +18,7 @@ function App() {
     withCredentials: true,
   });
 
-  const chat = document.getElementById('chat') as HTMLDivElement;
-  const [isConnected, setIsConnected] = useState(false);
+  const [isConnected, setIsConnected] = useState(socket.connected);
   const [userContent, setUserContent] = useState<IUserContent>({
     name: 'Edward.Green58',
     message: '',
@@ -29,6 +28,15 @@ function App() {
 
   const onConnect = () => {
     setIsConnected(true);
+
+    // Check the transport protocol that is being used.
+    const transport = socket.io.engine.transport.name; // in most cases, "polling"
+    console.log('main transport', transport);
+
+    socket.io.engine.on('upgrade', () => {
+      const upgradedTransport = socket.io.engine.transport.name; // in most cases, "websocket"
+      console.log('upgraded transport', upgradedTransport);
+    });
   };
 
   const onDisconnect = () => {
@@ -40,38 +48,35 @@ function App() {
   };
 
   useEffect(() => {
-    const onMessageSent = (message: any) => {
-      console.log(message);
-      // if (conversations[0] && conversations[0].messages.length) {
-      //   const { fullDocument } = message;
-      //   const textContent = fullDocument.text;
-      //   window.scrollTo(0, document.body.scrollHeight);
-      // }
+    const onMessageSent = (fullDocument: IMessage) => {
+      // Find the conversation that matches the provided ID
+      setConversations((currentConversations) => {
+        return currentConversations.map((c) => {
+          if (c._id === fullDocument.conversation) {
+            return {
+              ...c,
+              messages: [...c.messages, fullDocument],
+            };
+          }
+          return c;
+        });
+      });
     };
 
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
     socket.on('conversations', onConversations);
-    socket.on('change', onMessageSent);
+    socket.on('messageToRoom', onMessageSent);
     socket.on('connect_error', (err: Error) => {
       // the reason of the error, for example "xhr poll error"
-      console.log('Error', err.message);
-    });
-    socket.on('connect', () => {
-      const transport = socket.io.engine.transport.name; // in most cases, "polling"
-      console.log('main transport', transport);
-
-      socket.io.engine.on('upgrade', () => {
-        const upgradedTransport = socket.io.engine.transport.name; // in most cases, "websocket"
-        console.log('upgraded transport', upgradedTransport);
-      });
+      console.error('Error', err.message);
     });
 
     return () => {
       socket.off('connect', onConnect);
       socket.off('disconnect', onDisconnect);
       socket.off('conversations', onConversations);
-      socket.off('change', onMessageSent);
+      socket.off('messageToRoom', onMessageSent);
     };
   }, []);
 
@@ -123,17 +128,13 @@ function App() {
         },
       };
 
-      const result = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/v1/message`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
-        }
-      );
-      console.log('result', result);
+      await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/v1/message`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
 
       setUserContent({ ...userContent, message: '' });
     } catch (error) {
