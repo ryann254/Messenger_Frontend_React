@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
-import { IConversation } from '../interfaces/convesation';
-import { IMessage } from '../interfaces/message';
+import { IConversation } from '@interfaces/convesation';
+import { IMessage } from '@interfaces/message';
 
 interface IUserContent {
   name: string;

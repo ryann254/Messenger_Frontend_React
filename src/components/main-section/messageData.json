@@ -1,0 +1,47 @@
+[
+  {
+    "name": "Roronoa Zoro",
+    "message": "If I can’t even protect my captain’s dream, then whatever ambition I have is nothing but talk! Luffy must be the man who becomes the Pirate King",
+		"profilePic": "./src/assets/zoro.jpg"
+  },
+	{
+    "name": "General Franky",
+    "message": "The government says your existence is a crime, but no matter what kind of weapons you may hold, just being alive isn’t a sin! There’s no crime in living!",
+		"profilePic": "./src/assets/franky.jpg"
+  },
+	{
+    "name": "Monkey D. Luffy",
+    "message": "I don’t want to conquer anything. I just think the guy with the most freedom in this whole ocean… is the Pirate King!",
+		"profilePic": "./src/assets/luffy.jpg"
+  },
+	{
+    "name": "Da Chop",
+    "message": "I don’t care now. I wanted to look like a human because I wanted friends. Now I want to be a monster who’s helpful to Luffy!",
+		"profilePic": "./src/assets/chopper.jpg"
+  },
+	{
+    "name": "Usopp",
+    "message": "There comes a time when a man has to stand and fight! That time is when his friends’ dreams are being laughed at! And I won’t let you laugh at that!",
+		"profilePic": "./src/assets/usopp.jpg"
+  },
+	{
+    "name": "Nami",
+    "message": "Life is like a pencil that will surely run out, but will leave the beautiful writing of life",
+		"profilePic": "./src/assets/nami.jpg"
+  },
+	{
+    "name": "Nico Robin",
+    "message": "Sometimes the only thing you have to doubt is your own common sense",
+		"profilePic": "./src/assets/robin.jpg"
+  },
+	{
+    "name": "Brook",
+    "message": "What do you know of death?!! Have you ever died?!! You think death will preserve your cause forever?!! Ridiculous!! Death leaves nothing behind!!",
+		"profilePic": "./src/assets/brook.jpg"
+  },
+	{
+		"name": "Sanji",
+		"message": "Any person who hurts Nami-san’s feelings! I won’t let them live peacefully!",
+		"profilePic": "./src/assets/sanji.jpg"
+	}
+]
