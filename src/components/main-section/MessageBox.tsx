@@ -1,8 +1,10 @@
 const MessageBox = ({
   username,
+  message,
   profilePic,
 }: {
   username: string;
+  message: string;
   profilePic?: string;
 }) => {
   return (
@@ -20,15 +22,12 @@ const MessageBox = ({
       )}
       <div className='flex flex-col justify-start w-[85%]'>
         <div className='flex items-center'>
-          <div className='mr-5 font-semibold text-black text-lg'>
+          <div className='mr-5 font-semibold text-black text-lg tracking-wider'>
             {username}
           </div>
           <div className='text-sm text-black/[.4]'>12:50 PM</div>
         </div>
-        <div className='text-black/[.7]'>
-          Hey guys, I got lost again. Where's the ship? And where's the stupid
-          cook?
-        </div>
+        <div className='text-black/[.7] tracking-wide'>{message}</div>
       </div>
     </div>
   );
