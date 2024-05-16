@@ -4,8 +4,13 @@ import Avatar from '@assets/Avatar-2.png';
 const DiscoverSection = ({ homeOptions }: { homeOptions: IHomeOptions[] }) => {
   return (
     <>
-      <div className='text-[26px] text-white font-semibold tracking-wide border-b border-white/[.3] py-8 pb-5'>
-        Discover
+      <div className='flex justify-between items-center py-8 pb-5'>
+        <div className='text-[26px] text-white font-semibold tracking-wide border-b border-white/[.3]'>
+          Discover
+        </div>
+        <label htmlFor='my-drawer' aria-label='close sidebar'>
+          <i className='fa-solid fa-xmark text-white/[.5] text-xl cursor-pointer'></i>
+        </label>
       </div>
       {homeOptions.map((option, index) => (
         <div
@@ -27,14 +32,16 @@ const DiscoverSection = ({ homeOptions }: { homeOptions: IHomeOptions[] }) => {
 const ChannelSection = ({ channel }: { channel: IChannel }) => {
   return (
     <>
-      <div className='flex items-start border-b border-white/[.3] py-3.5 pb-2.5'>
+      <div className='flex items-center border-b border-white/[.3] py-3.5 pb-2.5'>
         <div className='flex flex-col w-[95%]'>
           <div className='text-xl text-white font-semibold tracking-wide text-ellipsis text-nowrap overflow-hidden w-[70%]'>
             {channel.name}
           </div>
           <span className='text-sm text-white/[.4]'>14 Members</span>
         </div>
-        <i className='fa-solid fa-circle-chevron-down mt-5 cursor-pointer text-white/[.7] text-lg'></i>
+        <label htmlFor='my-drawer' aria-label='close sidebar'>
+          <i className='fa-solid fa-xmark text-white/[.5] text-lg  cursor-pointer'></i>
+        </label>
       </div>
       {channel.hashTags.map((hashtag, index) => (
         <div

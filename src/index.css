@@ -8,3 +8,9 @@ body {
   font-weight: normal;
   font-style: normal;
 }
+
+.drawer-side > .hidden {
+  pointer-events: none;
+  overflow-y: hidden;
+  visibility: hidden;
+}
