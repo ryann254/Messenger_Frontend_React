@@ -1,10 +1,7 @@
 import { useState } from 'react';
+import Avatar from '@assets/Avatar-2.png';
 
-const DiscoverSection = ({
-  homeOptions,
-}: {
-  homeOptions: Record<string, string>[];
-}) => {
+const DiscoverSection = ({ homeOptions }: { homeOptions: IHomeOptions[] }) => {
   return (
     <>
       <div className='text-[26px] text-white font-semibold tracking-wide border-b border-white/[.3] py-8 pb-5'>
@@ -27,38 +24,73 @@ const DiscoverSection = ({
   );
 };
 
-const ChannelSection = ({ channel }: { channel: string }) => {
+const ChannelSection = ({ channel }: { channel: IChannel }) => {
   return (
     <>
       <div className='flex items-start border-b border-white/[.3] py-3.5 pb-2.5'>
         <div className='flex flex-col w-[95%]'>
           <div className='text-xl text-white font-semibold tracking-wide text-ellipsis text-nowrap overflow-hidden w-[70%]'>
-            {channel}
+            {channel.name}
           </div>
           <span className='text-sm text-white/[.4]'>14 Members</span>
         </div>
         <i className='fa-solid fa-circle-chevron-down mt-5 cursor-pointer text-white/[.7] text-lg'></i>
       </div>
-      <div className={`cursor-pointer p-3 pb-0 text-white/[.5]`}>
-        # Water Seven Arc
-      </div>
+      {channel.hashTags.map((hashtag, index) => (
+        <div
+          key={index + hashtag}
+          className={`cursor-pointer px-3 py-4 pb-0 text-white/[.5]`}
+        >
+          {hashtag}
+        </div>
+      ))}
     </>
   );
 };
+
+interface IHomeOptions {
+  name: string;
+  icon: string;
+}
+
+interface IChannel {
+  name: string;
+  hashTags: string[];
+}
 
 const Sidebar = () => {
   const [sidebarSelection, setsidebarSelection] = useState<
     Record<string, string | number>
   >({ name: 'Home', index: 0 });
-  const channelNames = [
-    'One Piece Chat',
-    'Naruto Universe',
-    'Jujutsu Kaisen World',
-    'Demon Slayer Universe',
+  const channelNames: IChannel[] = [
+    {
+      name: 'One Piece Chat',
+      hashTags: ['# Wano Arc', '# Egghead Arc', '# Marineford Arc'],
+    },
+    {
+      name: 'Naruto Universe',
+      hashTags: ['# Chunin Exams', '# Akatsuki', '# Five Kage Summit'],
+    },
+    {
+      name: 'Jujutsu Kaisen World',
+      hashTags: [
+        '# Cursed Techniques',
+        '# Tokyo No. 1 Colony',
+        '# Gojo Satoru',
+      ],
+    },
+    {
+      name: 'Demon Slayer Universe',
+      hashTags: [
+        '# Demon Slayers',
+        '# Mugen Train Arc',
+        '# Entertainment District Arc',
+      ],
+    },
   ];
-  const randomColors = ['#D97DE9', '#DF6F0B', '#0E77D9', '#5FB918'];
+  const randomColors: string[] = ['#D97DE9', '#DF6F0B', '#0E77D9', '#5FB918'];
 
-  const homeOptions = [
+  const homeOptions: IHomeOptions[] = [
     {
       name: 'Explore',
       icon: 'fa-solid fa-compass mr-2',
@@ -122,22 +154,31 @@ const Sidebar = () => {
               <i className='fa-solid fa-house'></i>
             </div>
             <div className='border border-white/[.3] w-[50%] mb-1'></div>
-            {channelNames.map((name, index) => (
+            {channelNames.map((channel, index) => (
               <div
-                className={`h-9 w-9 cursor-pointer rounded-full bg-[${
-                  randomColors[index]
-                }] flex justify-center items-center text-white font-semibold text-xl ${
-                  sidebarSelection.name === name
+                className={`h-9 w-9 cursor-pointer rounded-full flex justify-center items-center text-white font-semibold text-xl ${
+                  sidebarSelection.name === channel.name
                     ? 'scale-125 opacity-100 mt-6'
                     : 'opacity-70 mt-5'
                 }`}
-                key={index + name}
-                onClick={() => setsidebarSelection({ name, index })}
+                key={index + channel.name}
+                style={{
+                  backgroundColor: randomColors[index],
+                }}
+                onClick={() =>
+                  setsidebarSelection({ name: channel.name, index })
+                }
               >
-                {channelNames[index][0]}
+                {channelNames[index].name[0]}
               </div>
             ))}
             <i className='fa-solid fa-square-plus text-white cursor-pointer text-3xl mt-6 rounded-lg'></i>
+            <img
+              src={Avatar}
+              alt='avatar'
+              className='h-9 w-9 rounded-full mt-auto cursor-pointer'
+            />
+            <i className='fa-solid fa-gear text-white text-xl my-5 cursor-pointer'></i>
           </div>
           <div className='bg-[#110D59] w-[73%] text-white/[.3] rounded-lg px-3.5'>
             {sidebarSelection.name === 'Home' ? (
