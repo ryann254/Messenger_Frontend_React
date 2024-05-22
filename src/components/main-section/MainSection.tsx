@@ -6,11 +6,6 @@ import MessageBox from './MessageBox';
 import { IUser } from '@interfaces/user';
 // import TextInput from './TextInput';
 
-interface IUserContent {
-  name: string;
-  message: string;
-}
-
 interface IConversationMember extends IUser {
   username: string;
   email: string;
@@ -30,10 +25,6 @@ const MainSection = () => {
   });
 
   const [isConnected, setIsConnected] = useState(socket.connected);
-  const [userContent, setUserContent] = useState<IUserContent>({
-    name: 'Edward.Green58',
-    message: '',
-  });
   const [conversations, setConversations] = useState<IConversation[]>([]);
 
   const onConnect = () => {
@@ -116,42 +107,6 @@ const MainSection = () => {
   //   return password;
   // };
 
-  const sendMessage = async () => {
-    if (userContent.message === '') {
-      return;
-    }
-
-    try {
-      const data = {
-        user: {
-          id: '6635e291cdd94f2d13ca1687',
-          username: userContent.name,
-          email: 'Mollie_Mayert@example.org',
-          password: 'ryann@254',
-        },
-        message: {
-          sender: userContent.name,
-          recipientId: '6635e266cdd94f2d13ca167b',
-          recipientName: 'Grace_Schuster',
-          text: userContent.message,
-          sent: false,
-        },
-      };
-
-      await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/v1/message`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      setUserContent({ ...userContent, message: '' });
-    } catch (error) {
-      console.error('Error', error);
-    }
-  };
-
   const findUsername = (members: IConversationMember[], sender: string) => {
     const user = members.find((member) => member._id === sender);
     if (user) {
@@ -175,7 +130,6 @@ const MainSection = () => {
       ) : (
         <></>
       )}
-      {/* <TextInput /> */}
     </>
   );
 };
