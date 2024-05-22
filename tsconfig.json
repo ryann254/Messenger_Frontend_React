@@ -6,7 +6,8 @@
       "@pages/*": ["pages/*"],
       "@components/*": ["components/*"],
       "@interfaces/*": ["interfaces/*"],
-      "@utils/*": ["utils/*"]
+      "@utils/*": ["utils/*"],
+      "@context/*": ["context/*"]
     },
     "target": "ES2020",
     "useDefineForClassFields": true,
