@@ -14,7 +14,7 @@ interface IConversationMember extends IUser {
 }
 
 const MainSection = () => {
-  const { conversations } = useContext(SocketContext);
+  const { selectedConversation } = useContext(SocketContext);
   // const generatePassword = (length = 8) => {
   //   // Define the character sets
   //   const lowercase = 'abcdefghijklmnopqrstuvwxyz';
@@ -51,18 +51,23 @@ const MainSection = () => {
 
   return (
     <>
-      {conversations[0] && conversations[0].messages.length ? (
-        conversations[0].messages.map((message: IMessage, index: number) => (
-          <MessageBox
-            key={index}
-            username={findUsername(conversations[0].members, message.sender)}
-            message={message.text}
-            profilePic={message.media_url}
-            time={message.updatedAt}
-          />
-        ))
+      {selectedConversation && selectedConversation.messages.length ? (
+        selectedConversation.messages.map(
+          (message: IMessage, index: number) => (
+            <MessageBox
+              key={index}
+              username={findUsername(
+                selectedConversation.members,
+                message.sender
+              )}
+              message={message.text}
+              profilePic={message.media_url}
+              time={message.updatedAt}
+            />
+          )
+        )
       ) : (
-        <></>
+        <>Explore page</>
       )}
     </>
   );

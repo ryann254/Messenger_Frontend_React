@@ -10,11 +10,17 @@ type Props = {
 interface ISocketContext {
   isConnected: boolean;
   conversations: IConversation[];
+  selectedConversation: IConversation | undefined;
+  setSelectedConversation: React.Dispatch<
+    React.SetStateAction<IConversation | undefined>
+  >;
 }
 
 export const SocketContext = createContext<ISocketContext>({
   isConnected: false,
   conversations: [],
+  selectedConversation: undefined,
+  setSelectedConversation: () => {},
 });
 
 export const SocketContextProvider = ({ children }: Props) => {
@@ -29,6 +35,8 @@ export const SocketContextProvider = ({ children }: Props) => {
 
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [conversations, setConversations] = useState<IConversation[]>([]);
+  const [selectedConversation, setSelectedConversation] =
+    useState<IConversation>();
 
   const onConnect = () => {
     setIsConnected(true);
@@ -89,6 +97,8 @@ export const SocketContextProvider = ({ children }: Props) => {
       value={{
         isConnected,
         conversations,
+        selectedConversation,
+        setSelectedConversation,
       }}
     >
       {children}

@@ -1,6 +1,6 @@
 export interface IConversation {
   _id: string;
-  name: string | null;
+  name: string;
   members: IUser[];
   messages: IMessage[];
 }
