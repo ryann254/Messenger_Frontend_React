@@ -1,15 +1,20 @@
+import useFormattedTime from '@utils/useFormattedTime';
+
 const MessageBox = ({
   username,
   message,
   profilePic,
+  time,
 }: {
   username: string;
   message: string;
   profilePic?: string;
+  time: Date;
 }) => {
+  const formattedTime = useFormattedTime(new Date(time));
   return (
     <div className='pt-5 flex items-start'>
-      {profilePic ? (
+      {profilePic !== '' && profilePic !== undefined ? (
         <img
           src={profilePic}
           alt='profile pic'
@@ -25,7 +30,7 @@ const MessageBox = ({
           <div className='mr-5 font-semibold text-black text-lg tracking-wider'>
             {username}
           </div>
-          <div className='text-sm text-black/[.4]'>12:50 PM</div>
+          <div className='text-sm text-black/[.4]'>{formattedTime}</div>
         </div>
         <div className='text-black/[.7] tracking-wide'>{message}</div>
       </div>

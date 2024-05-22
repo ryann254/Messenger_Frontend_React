@@ -2,10 +2,21 @@ import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import { IConversation } from '@interfaces/convesation';
 import { IMessage } from '@interfaces/message';
+import MessageBox from './MessageBox';
+import { IUser } from '@interfaces/user';
+// import TextInput from './TextInput';
 
 interface IUserContent {
   name: string;
   message: string;
+}
+
+interface IConversationMember extends IUser {
+  username: string;
+  email: string;
+  online: boolean;
+  conversation: string[];
+  lastActive: Date;
 }
 
 const MainSection = () => {
@@ -23,7 +34,6 @@ const MainSection = () => {
     name: 'Edward.Green58',
     message: '',
   });
-  // TODO: Create a UI that maps out all the conversations that a user has.
   const [conversations, setConversations] = useState<IConversation[]>([]);
 
   const onConnect = () => {
@@ -142,47 +152,30 @@ const MainSection = () => {
     }
   };
 
+  const findUsername = (members: IConversationMember[], sender: string) => {
+    const user = members.find((member) => member._id === sender);
+    if (user) {
+      return user.username;
+    }
+    return 'Loading...';
+  };
+
   return (
     <>
       {conversations[0] && conversations[0].messages.length ? (
         conversations[0].messages.map((message: IMessage, index: number) => (
-          <div key={index} id='chat'>
-            {message.text}
-          </div>
+          <MessageBox
+            key={index}
+            username={findUsername(conversations[0].members, message.sender)}
+            message={message.text}
+            profilePic={message.media_url}
+            time={message.updatedAt}
+          />
         ))
       ) : (
         <></>
       )}
-      <div className='container mt-4 mb-2 xl:w-[70%] mx-auto px-4 xl:px-0 grid grid-cols-5 gap-4'>
-        <div className='col-span-1 rounded-md h-11 border border-[#007bff]'>
-          <input
-            type='text'
-            value={userContent.name}
-            onChange={(event) => {
-              setUserContent({ ...userContent, name: event.target.value });
-            }}
-            className='w-full px-4 py-2 h-full bg-transparent border-none outline-none'
-          />
-        </div>
-        <div className='col-span-3 rounded-md h-11 border border-[#007bff]'>
-          <input
-            type='text'
-            value={userContent.message}
-            onChange={(event) => {
-              setUserContent({ ...userContent, message: event.target.value });
-            }}
-            className='w-full px-4 py-2 h-full bg-transparent border-none outline-none'
-          />
-        </div>
-        <div className='col-span-1 rounded-md h-11 border bg-[#007bff]'>
-          <button
-            className='w-full h-full cursor-pointer text-white'
-            onClick={sendMessage}
-          >
-            Send
-          </button>
-        </div>
-      </div>
+      {/* <TextInput /> */}
     </>
   );
 };
