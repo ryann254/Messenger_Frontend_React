@@ -3,6 +3,7 @@ import { IMessage } from '@interfaces/message';
 import MessageBox from './MessageBox';
 import { IUser } from '@interfaces/user';
 import { SocketContext } from '@context/socket.ctx';
+import CreateConversationModal from './CreateConversationModal';
 // import TextInput from './TextInput';
 
 interface IConversationMember extends IUser {
@@ -52,6 +53,7 @@ const MainSection = () => {
 
   return (
     <>
+      <CreateConversationModal />
       {selectedConversation && selectedConversation.messages.length ? (
         selectedConversation.messages.map(
           (message: IMessage, index: number) => (

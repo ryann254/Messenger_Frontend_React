@@ -36,7 +36,7 @@ const DiscoverSection = ({ homeOptions }: { homeOptions: IHomeOptions[] }) => {
   );
 };
 
-const ChannelSection = ({
+const ConversationSection = ({
   conversation,
   channel,
 }: {
@@ -181,6 +181,7 @@ const Sidebar = () => {
         ></label>
         <div className='menu w-[86%] min-h-full bg-[#28246F] text-base-content flex flex-row'>
           <div className='w-20 flex flex-col justify-start items-center'>
+            {/* Home Button */}
             <div
               className={`bg-white h-9 w-9 rounded-xl mt-4 mb-5 flex justify-center items-center ${
                 sidebarSelection.name === 'Home' ? 'opacity-100' : 'opacity-70'
@@ -189,6 +190,7 @@ const Sidebar = () => {
             >
               <i className='fa-solid fa-house'></i>
             </div>
+            {/* Conversation Section */}
             <div className='border border-white/[.3] w-[50%] mb-1'></div>
             {conversations.length ? (
               conversations.map((conversation, index) => (
@@ -218,7 +220,17 @@ const Sidebar = () => {
             ) : (
               <></>
             )}
-            <i className='fa-solid fa-square-plus text-white cursor-pointer text-3xl mt-6 rounded-lg'></i>
+            {/* Create Conversation Section */}
+            <label htmlFor='my-drawer' aria-label='close sidebar'>
+              <i
+                className='fa-solid fa-square-plus text-white cursor-pointer text-3xl mt-6 rounded-lg'
+                onClick={() =>
+                  // @ts-expect-error showModal is a function that comes with daisyui.
+                  document.getElementById('my_modal_3')?.showModal()
+                }
+              ></i>
+            </label>
+            {/* Profile and Settign Section */}
             <img
               src={Avatar}
               alt='avatar'
@@ -230,7 +242,7 @@ const Sidebar = () => {
             {sidebarSelection.name === 'Home' ? (
               <DiscoverSection homeOptions={homeOptions} />
             ) : (
-              <ChannelSection
+              <ConversationSection
                 conversation={conversations[sidebarSelection.index as number]}
                 channel={channelNames[sidebarSelection.index as number]}
               />
