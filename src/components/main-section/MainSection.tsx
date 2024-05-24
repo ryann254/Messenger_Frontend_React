@@ -70,6 +70,9 @@ const MainSection = () => {
           )
         )
       ) : (
+        <></>
+      )}
+      {!selectedConversation ? (
         <>
           {selectedHomeOption === 'Explore' && <>Explore page</>}
           {selectedHomeOption === 'Gaming' && <>Gaming page</>}
@@ -77,6 +80,8 @@ const MainSection = () => {
           {selectedHomeOption === 'Entertainment' && <>Entertainment page</>}
           {selectedHomeOption === 'Hobby' && <>Hobby page</>}
         </>
+      ) : (
+        <></>
       )}
     </>
   );

@@ -94,6 +94,7 @@ export const SocketContextProvider = ({ children }: Props) => {
       socket.off('messageToRoom', onMessageSent);
     };
   }, []);
+  console.log(conversations);
 
   return (
     <SocketContext.Provider

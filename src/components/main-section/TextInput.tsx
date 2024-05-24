@@ -48,7 +48,7 @@ const TextInput = () => {
 
       setMessage('');
     } catch (error) {
-      console.error('Error', error);
+      console.error('Error sending message', error);
     }
   };
   return (

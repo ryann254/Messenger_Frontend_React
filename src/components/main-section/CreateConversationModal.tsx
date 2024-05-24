@@ -1,6 +1,43 @@
 import UploadImage from '@assets/upload-image.png';
+import { useState } from 'react';
 
 const CreateConversationModal = () => {
+  const [conversationName, setConversationName] = useState('');
+
+  // TODO: Add a popup message to show success or errors
+  const handleCreateConversation = async () => {
+    if (!conversationName) {
+      return;
+    }
+
+    try {
+      const userData = localStorage.getItem('user') || '';
+      const user = JSON.parse(userData);
+      const data = {
+        user,
+        conversation: {
+          name: conversationName,
+          members: [user.id],
+        },
+      };
+
+      const result = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/v1/conversation`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        }
+      );
+
+      if (result.ok) setConversationName('');
+    } catch (error) {
+      console.log('Error creating conversation', error);
+    }
+  };
+
   return (
     <dialog id='my_modal_3' className='modal relative'>
       <div className='modal-box w-full h-[55%] max-h-full absolute bottom-0 rounded-b-none p-0'>
@@ -29,6 +66,8 @@ const CreateConversationModal = () => {
               type='text'
               className='input focus:border-none focus:outline-none text-sm input-bordered border-[#D8E0E8] w-full bg-[#F1F5F9]'
               id='serverName'
+              value={conversationName}
+              onChange={(e) => setConversationName(e.target.value)}
               placeholder='Eg. Zoro fan club'
             />
           </div>
@@ -40,13 +79,16 @@ const CreateConversationModal = () => {
           </span>
         </div>
         <div className='flex justify-between items-center text-sm bg-[#0B5FAE]/[.1] py-4 px-6'>
-          <form method='dialog'>
+          <form method='dialog' className='flex justify-between w-full'>
             {/* if there is a button in form, it will close the modal */}
             <button className='bg-transparent font-bold'>Close</button>
+            <button
+              className='bg-[#0B5FAE] rounded-lg text-white p-2.5'
+              onClick={handleCreateConversation}
+            >
+              Create Conversation
+            </button>
           </form>
-          <button className='bg-[#0B5FAE] rounded-lg text-white p-2.5'>
-            Create Conversation
-          </button>
         </div>
       </div>
     </dialog>

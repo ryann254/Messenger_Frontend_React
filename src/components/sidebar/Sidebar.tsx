@@ -17,9 +17,12 @@ const DiscoverSection = ({ homeOptions }: { homeOptions: IHomeOptions[] }) => {
         </label>
       </div>
       {homeOptions.map((option, index) => (
-        <label htmlFor='my-drawer' aria-label='close sidebar'>
+        <label
+          key={index + option.name}
+          htmlFor='my-drawer'
+          aria-label='close sidebar'
+        >
           <div
-            key={index + option.name}
             className={`text-lg cursor-pointer flex items-center mt-4 ${
               selectedHomeOption === option.name
                 ? 'text-[#28246F] bg-white'
@@ -192,38 +195,47 @@ const Sidebar = () => {
             </div>
             {/* Conversation Section */}
             <div className='border border-white/[.3] w-[50%] mb-1'></div>
-            {conversations.length ? (
-              conversations.map((conversation, index) => (
-                <label htmlFor='my-drawer' aria-label='close sidebar'>
-                  <div
-                    className={`h-9 w-9 cursor-pointer rounded-full flex justify-center items-center text-white font-semibold text-xl ${
-                      sidebarSelection.name === conversation.name
-                        ? 'scale-125 opacity-100 mt-6'
-                        : 'opacity-70 mt-5'
-                    }`}
+            <div className='max-h-[60%] h-full overflow-y-scroll w-full flex flex-col items-center'>
+              {conversations.length ? (
+                conversations.map((conversation, index) => (
+                  <label
                     key={index + conversation.name}
-                    style={{
-                      backgroundColor: randomColors[index],
-                    }}
-                    onClick={() =>
-                      handleSidebarSelection(
-                        conversation.name,
-                        index,
-                        conversation
-                      )
-                    }
+                    htmlFor='my-drawer'
+                    aria-label='close sidebar'
                   >
-                    {conversation.name[0]}
-                  </div>
-                </label>
-              ))
-            ) : (
-              <></>
-            )}
+                    <div
+                      className={`h-9 w-9 cursor-pointer rounded-full flex justify-center items-center text-white font-semibold text-xl ${
+                        sidebarSelection.name === conversation.name
+                          ? 'scale-125 opacity-100 mt-6'
+                          : 'opacity-70 mt-5'
+                      }`}
+                      style={{
+                        backgroundColor: randomColors[index],
+                      }}
+                      onClick={() =>
+                        handleSidebarSelection(
+                          conversation.name,
+                          index,
+                          conversation
+                        )
+                      }
+                    >
+                      {conversation.name[0]}
+                    </div>
+                  </label>
+                ))
+              ) : (
+                <></>
+              )}
+            </div>
             {/* Create Conversation Section */}
-            <label htmlFor='my-drawer' aria-label='close sidebar'>
+            <label
+              htmlFor='my-drawer'
+              aria-label='close sidebar'
+              className='mt-9'
+            >
               <i
-                className='fa-solid fa-square-plus text-white cursor-pointer text-3xl mt-6 rounded-lg'
+                className='fa-solid fa-square-plus text-white cursor-pointer text-3xl rounded-lg'
                 onClick={() =>
                   // @ts-expect-error showModal is a function that comes with daisyui.
                   document.getElementById('my_modal_3')?.showModal()
