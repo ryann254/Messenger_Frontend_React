@@ -14,6 +14,8 @@ interface ISocketContext {
   setSelectedConversation: React.Dispatch<
     React.SetStateAction<IConversation | undefined>
   >;
+  selectedHomeOption: string;
+  setSelectedHomeOption: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const SocketContext = createContext<ISocketContext>({
@@ -21,6 +23,8 @@ export const SocketContext = createContext<ISocketContext>({
   conversations: [],
   selectedConversation: undefined,
   setSelectedConversation: () => {},
+  selectedHomeOption: '',
+  setSelectedHomeOption: () => {},
 });
 
 export const SocketContextProvider = ({ children }: Props) => {
@@ -37,6 +41,7 @@ export const SocketContextProvider = ({ children }: Props) => {
   const [conversations, setConversations] = useState<IConversation[]>([]);
   const [selectedConversation, setSelectedConversation] =
     useState<IConversation>();
+  const [selectedHomeOption, setSelectedHomeOption] = useState('Explore');
 
   const onConnect = () => {
     setIsConnected(true);
@@ -62,16 +67,14 @@ export const SocketContextProvider = ({ children }: Props) => {
   useEffect(() => {
     const onMessageSent = (fullDocument: IMessage) => {
       // Find the conversation that matches the provided ID
-      setConversations((currentConversations) => {
-        return currentConversations.map((c) => {
-          if (c._id === fullDocument.conversation) {
-            return {
-              ...c,
-              messages: [...c.messages, fullDocument],
-            };
-          }
-          return c;
-        });
+      setSelectedConversation((currentConversation) => {
+        if (currentConversation?._id === fullDocument.conversation) {
+          return {
+            ...currentConversation,
+            messages: [...currentConversation.messages, fullDocument],
+          };
+        }
+        return currentConversation;
       });
     };
 
@@ -99,6 +102,8 @@ export const SocketContextProvider = ({ children }: Props) => {
         conversations,
         selectedConversation,
         setSelectedConversation,
+        selectedHomeOption,
+        setSelectedHomeOption,
       }}
     >
       {children}

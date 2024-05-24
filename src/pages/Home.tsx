@@ -4,10 +4,11 @@ import MainSection from '@components/main-section/MainSection';
 
 import Navbar from '@components/main-section/Navbar';
 import TextInput from '@components/main-section/TextInput';
-import { useEffect, useState } from 'react';
+import { SocketContext } from '@context/socket.ctx';
+import { useContext, useEffect } from 'react';
 
 const Home = () => {
-  const [message, setMessage] = useState('');
+  const { selectedConversation } = useContext(SocketContext);
 
   useEffect(() => {
     const user = {
@@ -26,39 +27,6 @@ const Home = () => {
     localStorage.setItem('user', JSON.stringify(user));
     localStorage.setItem('message', JSON.stringify(message));
   }, []);
-
-  const sendMessage = async () => {
-    if (message === '') {
-      return;
-    }
-
-    try {
-      const storedUser = localStorage.getItem('user') || '';
-      const storedMessageData = localStorage.getItem('message') || '';
-      const user = JSON.parse(storedUser);
-      const messageData = JSON.parse(storedMessageData);
-      const data = {
-        user,
-        message: {
-          ...messageData,
-          text: message,
-        },
-      };
-
-      await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/v1/message`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      setMessage('');
-    } catch (error) {
-      console.error('Error', error);
-    }
-  };
-
   return (
     <div className='overflow-hidden'>
       {/* <Navbar/> and <Sidebar /> components*/}
@@ -66,11 +34,7 @@ const Home = () => {
       <div className='h-[85vh] px-6 overflow-x-hidden overflow-y-scroll min-h-full'>
         <MainSection />
       </div>
-      <TextInput
-        sendMessage={sendMessage}
-        message={message}
-        setMessage={setMessage}
-      />
+      {selectedConversation ? <TextInput /> : <></>}
     </div>
   );
 };

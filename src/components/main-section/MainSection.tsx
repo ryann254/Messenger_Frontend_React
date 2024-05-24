@@ -14,7 +14,8 @@ interface IConversationMember extends IUser {
 }
 
 const MainSection = () => {
-  const { selectedConversation } = useContext(SocketContext);
+  const { selectedConversation, selectedHomeOption } =
+    useContext(SocketContext);
   // const generatePassword = (length = 8) => {
   //   // Define the character sets
   //   const lowercase = 'abcdefghijklmnopqrstuvwxyz';
@@ -67,7 +68,13 @@ const MainSection = () => {
           )
         )
       ) : (
-        <>Explore page</>
+        <>
+          {selectedHomeOption === 'Explore' && <>Explore page</>}
+          {selectedHomeOption === 'Gaming' && <>Gaming page</>}
+          {selectedHomeOption === 'Working' && <>Working page</>}
+          {selectedHomeOption === 'Entertainment' && <>Entertainment page</>}
+          {selectedHomeOption === 'Hobby' && <>Hobby page</>}
+        </>
       )}
     </>
   );

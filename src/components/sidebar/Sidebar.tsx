@@ -4,6 +4,8 @@ import { SocketContext } from '@context/socket.ctx';
 import { IConversation } from '@interfaces/convesation';
 
 const DiscoverSection = ({ homeOptions }: { homeOptions: IHomeOptions[] }) => {
+  const { selectedHomeOption, setSelectedHomeOption } =
+    useContext(SocketContext);
   return (
     <>
       <div className='flex justify-between items-center py-8 pb-5'>
@@ -15,17 +17,20 @@ const DiscoverSection = ({ homeOptions }: { homeOptions: IHomeOptions[] }) => {
         </label>
       </div>
       {homeOptions.map((option, index) => (
-        <div
-          key={index + option.name}
-          className={`text-lg cursor-pointer flex items-center mt-4 ${
-            index === 0
-              ? 'text-[#28246F] bg-white'
-              : 'text-white/[.3] bg-transparent'
-          } p-3 rounded-lg  font-semibold`}
-        >
-          <i className={`${option.icon}`}></i>
-          <span className='text-sm'>{option.name}</span>
-        </div>
+        <label htmlFor='my-drawer' aria-label='close sidebar'>
+          <div
+            key={index + option.name}
+            className={`text-lg cursor-pointer flex items-center mt-4 ${
+              selectedHomeOption === option.name
+                ? 'text-[#28246F] bg-white'
+                : 'text-white/[.3] bg-transparent'
+            } p-3 rounded-lg  font-semibold`}
+            onClick={() => setSelectedHomeOption(option.name)}
+          >
+            <i className={`${option.icon}`}></i>
+            <span className='text-sm'>{option.name}</span>
+          </div>
+        </label>
       ))}
     </>
   );
@@ -187,26 +192,28 @@ const Sidebar = () => {
             <div className='border border-white/[.3] w-[50%] mb-1'></div>
             {conversations.length ? (
               conversations.map((conversation, index) => (
-                <div
-                  className={`h-9 w-9 cursor-pointer rounded-full flex justify-center items-center text-white font-semibold text-xl ${
-                    sidebarSelection.name === conversation.name
-                      ? 'scale-125 opacity-100 mt-6'
-                      : 'opacity-70 mt-5'
-                  }`}
-                  key={index + conversation.name}
-                  style={{
-                    backgroundColor: randomColors[index],
-                  }}
-                  onClick={() =>
-                    handleSidebarSelection(
-                      conversation.name,
-                      index,
-                      conversation
-                    )
-                  }
-                >
-                  {conversation.name[0]}
-                </div>
+                <label htmlFor='my-drawer' aria-label='close sidebar'>
+                  <div
+                    className={`h-9 w-9 cursor-pointer rounded-full flex justify-center items-center text-white font-semibold text-xl ${
+                      sidebarSelection.name === conversation.name
+                        ? 'scale-125 opacity-100 mt-6'
+                        : 'opacity-70 mt-5'
+                    }`}
+                    key={index + conversation.name}
+                    style={{
+                      backgroundColor: randomColors[index],
+                    }}
+                    onClick={() =>
+                      handleSidebarSelection(
+                        conversation.name,
+                        index,
+                        conversation
+                      )
+                    }
+                  >
+                    {conversation.name[0]}
+                  </div>
+                </label>
               ))
             ) : (
               <></>

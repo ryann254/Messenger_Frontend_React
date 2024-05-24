@@ -1,14 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
-const TextInput = ({
-  message,
-  setMessage,
-  sendMessage,
-}: {
-  message: string;
-  setMessage: React.Dispatch<React.SetStateAction<string>>;
-  sendMessage: () => void;
-}) => {
+const TextInput = () => {
+  const [message, setMessage] = useState('');
+
   useEffect(() => {
     const textInput = document.getElementById('textInput');
     textInput?.addEventListener('keyup', (e) => {
@@ -25,6 +19,38 @@ const TextInput = ({
       });
     };
   }, []);
+
+  const sendMessage = async () => {
+    if (message === '') {
+      return;
+    }
+
+    try {
+      const storedUser = localStorage.getItem('user') || '';
+      const storedMessageData = localStorage.getItem('message') || '';
+      const user = JSON.parse(storedUser);
+      const messageData = JSON.parse(storedMessageData);
+      const data = {
+        user,
+        message: {
+          ...messageData,
+          text: message,
+        },
+      };
+
+      await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/v1/message`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      setMessage('');
+    } catch (error) {
+      console.error('Error', error);
+    }
+  };
   return (
     <div className='flex px-6 py-4 relative'>
       <div className='h-14 w-14 mr-4 rounded-full border border-black/[.2] flex justify-center items-center cursor-pointer'>
