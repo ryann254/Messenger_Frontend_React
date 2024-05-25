@@ -113,7 +113,21 @@ const Sidebar = () => {
       ],
     },
   ];
-  const randomColors: string[] = ['#D97DE9', '#DF6F0B', '#0E77D9', '#5FB918'];
+  const randomColors: string[] = [
+    '#D97DE9',
+    '#DF6F0B',
+    '#0E77D9',
+    '#5FB918',
+    '#0B5FAE',
+    '#C91616',
+    '#16C9C9',
+    '#1616C9',
+    '#C9C916',
+    '#C916C9',
+    '#16C916',
+    '#C9C9C9',
+    '#161616',
+  ];
 
   const homeOptions: IHomeOptions[] = [
     {
@@ -151,6 +165,11 @@ const Sidebar = () => {
       setSelectedConversation(conversation);
     }
   };
+
+  const randomColorsGenerator = () => {
+    return randomColors[Math.floor(Math.random() * randomColors.length)];
+  };
+
   return (
     <div className='drawer z-10'>
       {/* Sidebar Button */}
@@ -195,7 +214,7 @@ const Sidebar = () => {
             </div>
             {/* Conversation Section */}
             <div className='border border-white/[.3] w-[50%] mb-1'></div>
-            <div className='max-h-[60%] h-full overflow-y-scroll w-full flex flex-col items-center'>
+            <div className='max-h-[60%] overflow-y-scroll w-full flex flex-col items-center'>
               {conversations.length ? (
                 conversations.map((conversation, index) => (
                   <label
@@ -210,7 +229,7 @@ const Sidebar = () => {
                           : 'opacity-70 mt-5'
                       }`}
                       style={{
-                        backgroundColor: randomColors[index],
+                        backgroundColor: randomColorsGenerator(),
                       }}
                       onClick={() =>
                         handleSidebarSelection(
@@ -256,7 +275,7 @@ const Sidebar = () => {
             ) : (
               <ConversationSection
                 conversation={conversations[sidebarSelection.index as number]}
-                channel={channelNames[sidebarSelection.index as number]}
+                channel={channelNames[0]}
               />
             )}
           </div>

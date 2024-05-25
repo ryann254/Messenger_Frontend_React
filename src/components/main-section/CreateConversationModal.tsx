@@ -39,7 +39,7 @@ const CreateConversationModal = () => {
   };
 
   return (
-    <dialog id='my_modal_3' className='modal relative'>
+    <dialog id='my_modal_3' className='modal'>
       <div className='modal-box w-full h-[55%] max-h-full absolute bottom-0 rounded-b-none p-0'>
         <div className='p-6'>
           <h3 className='text-lg text-center tracking-wide font-bold'>

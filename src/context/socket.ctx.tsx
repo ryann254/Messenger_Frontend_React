@@ -29,9 +29,11 @@ export const SocketContext = createContext<ISocketContext>({
 
 export const SocketContextProvider = ({ children }: Props) => {
   // Connect to the io Server.
+  const loggedInUser = JSON.parse(localStorage.getItem('user') || '');
+
   const socket = io(import.meta.env.VITE_BACKEND_URL, {
     auth: {
-      userId: '6635e291cdd94f2d13ca1687',
+      userId: loggedInUser.id,
     },
     transports: ['websocket', 'polling'],
     withCredentials: true,
@@ -43,19 +45,6 @@ export const SocketContextProvider = ({ children }: Props) => {
     useState<IConversation>();
   const [selectedHomeOption, setSelectedHomeOption] = useState('Explore');
 
-  const onConnect = () => {
-    setIsConnected(true);
-
-    // Check the transport protocol that is being used.
-    const transport = socket.io.engine.transport.name; // in most cases, "polling"
-    console.log('main transport', transport);
-
-    socket.io.engine.on('upgrade', () => {
-      const upgradedTransport = socket.io.engine.transport.name; // in most cases, "websocket"
-      console.log('upgraded transport', upgradedTransport);
-    });
-  };
-
   const onDisconnect = () => {
     setIsConnected(false);
   };
@@ -64,7 +53,27 @@ export const SocketContextProvider = ({ children }: Props) => {
     setConversations(conversations);
   };
 
+  const onConversationCreated = (conversation: IConversation) => {
+    setConversations((currentConversations) => [
+      ...currentConversations,
+      conversation,
+    ]);
+  };
+
   useEffect(() => {
+    const onConnect = () => {
+      setIsConnected(true);
+
+      // Check the transport protocol that is being used.
+      const transport = socket.io.engine.transport.name; // in most cases, "polling"
+      console.log('main transport', transport);
+
+      socket.io.engine.on('upgrade', () => {
+        const upgradedTransport = socket.io.engine.transport.name; // in most cases, "websocket"
+        console.log('upgraded transport', upgradedTransport);
+      });
+    };
+
     const onMessageSent = (fullDocument: IMessage) => {
       // Find the conversation that matches the provided ID
       setSelectedConversation((currentConversation) => {
@@ -81,7 +90,8 @@ export const SocketContextProvider = ({ children }: Props) => {
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
     socket.on('conversations', onConversations);
-    socket.on('messageToRoom', onMessageSent);
+    socket.on('messageCreated', onMessageSent);
+    socket.on('conversationCreated', onConversationCreated);
     socket.on('connect_error', (err: Error) => {
       // the reason of the error, for example "xhr poll error"
       console.error('Error', err.message);
@@ -91,10 +101,10 @@ export const SocketContextProvider = ({ children }: Props) => {
       socket.off('connect', onConnect);
       socket.off('disconnect', onDisconnect);
       socket.off('conversations', onConversations);
-      socket.off('messageToRoom', onMessageSent);
+      socket.off('messageCreated', onMessageSent);
+      socket.off('conversationCreated', onConversationCreated);
     };
   }, []);
-  console.log(conversations);
 
   return (
     <SocketContext.Provider

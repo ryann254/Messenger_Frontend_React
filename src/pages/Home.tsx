@@ -12,21 +12,22 @@ const Home = () => {
 
   useEffect(() => {
     const user = {
-      id: '6635e291cdd94f2d13ca1687',
-      username: 'Edward.Green58',
-      email: 'Mollie_Mayert@example.org',
+      id: '66509d55ff0ba06ddcd36f48',
+      username: 'Timothy_Schaefer91',
+      email: 'Jerel51@gmail.com',
       password: 'ryann@254',
     };
 
     const message = {
-      sender: 'Edward.Green58',
-      recipientId: '6635e266cdd94f2d13ca167b',
-      recipientName: 'Grace_Schuster',
+      sender: 'Timothy_Schaefer91',
+      recipientId: '66509d89ff0ba06ddcd36f4b',
+      recipientName: 'Sabryna.Kemmer68',
       sent: false,
     };
     localStorage.setItem('user', JSON.stringify(user));
     localStorage.setItem('message', JSON.stringify(message));
   }, []);
+
   return (
     <div className='overflow-hidden'>
       {/* <Navbar/> and <Sidebar /> components*/}
