@@ -54,10 +54,12 @@ export const SocketContextProvider = ({ children }: Props) => {
   };
 
   const onConversationCreated = (conversation: IConversation) => {
-    setConversations((currentConversations) => [
-      ...currentConversations,
-      conversation,
-    ]);
+    if (conversation) {
+      setConversations((currentConversations) => [
+        ...currentConversations,
+        conversation,
+      ]);
+    }
   };
 
   useEffect(() => {
@@ -74,17 +76,19 @@ export const SocketContextProvider = ({ children }: Props) => {
       });
     };
 
-    const onMessageSent = (fullDocument: IMessage) => {
-      // Find the conversation that matches the provided ID
-      setSelectedConversation((currentConversation) => {
-        if (currentConversation?._id === fullDocument.conversation) {
-          return {
-            ...currentConversation,
-            messages: [...currentConversation.messages, fullDocument],
-          };
-        }
-        return currentConversation;
-      });
+    const onMessageSent = (messageDocument: IMessage) => {
+      if (messageDocument) {
+        // Find the conversation that matches the provided ID
+        setSelectedConversation((currentConversation) => {
+          if (currentConversation?._id === messageDocument.conversation) {
+            return {
+              ...currentConversation,
+              messages: [...currentConversation.messages, messageDocument],
+            };
+          }
+          return currentConversation;
+        });
+      }
     };
 
     socket.on('connect', onConnect);
