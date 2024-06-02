@@ -11,24 +11,22 @@ interface ISocketContext {
   isConnected: boolean;
   conversations: IConversation[];
   selectedConversation: IConversation | undefined;
-  setSelectedConversation: React.Dispatch<
-    React.SetStateAction<IConversation | undefined>
-  >;
   selectedHomeOption: string;
   setSelectedHomeOption: React.Dispatch<React.SetStateAction<string>>;
   isConversationMember: boolean;
   setIsConversationMember: React.Dispatch<React.SetStateAction<boolean>>;
+  onConversationMemberCheck: (conversation: IConversation | undefined) => void;
 }
 
 export const SocketContext = createContext<ISocketContext>({
   isConnected: false,
   conversations: [],
   selectedConversation: undefined,
-  setSelectedConversation: () => {},
   selectedHomeOption: '',
   setSelectedHomeOption: () => {},
   isConversationMember: false,
   setIsConversationMember: () => {},
+  onConversationMemberCheck: () => {},
 });
 
 export const SocketContextProvider = ({ children }: Props) => {
@@ -49,6 +47,22 @@ export const SocketContextProvider = ({ children }: Props) => {
     useState<IConversation>();
   const [selectedHomeOption, setSelectedHomeOption] = useState('Explore');
   const [isConversationMember, setIsConversationMember] = useState(false);
+
+  // Checks if a user is a member of a conversation before joining.
+  const onConversationMemberCheck = (
+    convesation: IConversation | undefined
+  ) => {
+    if (convesation) {
+      const isMember = convesation.members.find(
+        (member) => member.id === loggedInUser.id
+      );
+      setIsConversationMember(isMember ? true : false);
+      setSelectedConversation(convesation);
+    } else {
+      setSelectedConversation(undefined);
+      setIsConversationMember(false);
+    }
+  };
 
   const onDisconnect = () => {
     setIsConnected(false);
@@ -121,11 +135,11 @@ export const SocketContextProvider = ({ children }: Props) => {
         isConnected,
         conversations,
         selectedConversation,
-        setSelectedConversation,
         selectedHomeOption,
         setSelectedHomeOption,
         isConversationMember,
         setIsConversationMember,
+        onConversationMemberCheck,
       }}
     >
       {children}

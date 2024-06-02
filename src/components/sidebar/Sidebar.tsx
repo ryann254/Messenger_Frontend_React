@@ -86,7 +86,8 @@ const Sidebar = () => {
   const [sidebarSelection, setsidebarSelection] = useState<
     Record<string, string | number>
   >({ name: 'Home', index: 0 });
-  const { conversations, setSelectedConversation } = useContext(SocketContext);
+  const { conversations, onConversationMemberCheck } =
+    useContext(SocketContext);
 
   const channelNames: IChannel[] = [
     {
@@ -160,10 +161,10 @@ const Sidebar = () => {
   ) => {
     if (name === 'Home') {
       setsidebarSelection({ name, index: 0 });
-      setSelectedConversation(undefined);
+      onConversationMemberCheck(undefined);
     } else {
       setsidebarSelection({ name, index });
-      setSelectedConversation(conversation);
+      onConversationMemberCheck(conversation);
     }
   };
 

@@ -10,14 +10,12 @@ import { useContext, useEffect } from 'react';
 const Home = () => {
   const { selectedConversation, isConversationMember } =
     useContext(SocketContext);
-  console.log(selectedConversation);
 
   useEffect(() => {
     const user = {
       id: '66509d55ff0ba06ddcd36f48',
       username: 'Timothy_Schaefer91',
       email: 'Jerel51@gmail.com',
-      password: 'ryann@254',
     };
 
     const message = {

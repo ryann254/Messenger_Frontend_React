@@ -4,8 +4,6 @@ import MessageBox from './MessageBox';
 import { IUser } from '@interfaces/user';
 import { SocketContext } from '@context/socket.ctx';
 import CreateConversationModal from './CreateConversationModal';
-import { IConversation } from '@interfaces/convesation';
-import { Member } from '@components/channel-info/ChannelInfo';
 import JoinConversation from './JoinConversation';
 import WelcomeScreenModal from './WelcomeScreenModal';
 
@@ -28,7 +26,6 @@ const MainSection = () => {
 
   const { selectedConversation, selectedHomeOption, isConversationMember } =
     useContext(SocketContext);
-  console.log(isConversationMember);
   // const generatePassword = (length = 8) => {
   //   // Define the character sets
   //   const lowercase = 'abcdefghijklmnopqrstuvwxyz';
@@ -67,8 +64,14 @@ const MainSection = () => {
     <>
       <CreateConversationModal />
       <WelcomeScreenModal />
-      {!isConversationMember ? <JoinConversation /> : <></>}
-      {/* {selectedConversation && selectedConversation.messages.length ? (
+      {!isConversationMember && selectedConversation ? (
+        <JoinConversation />
+      ) : (
+        <></>
+      )}
+      {selectedConversation &&
+      isConversationMember &&
+      selectedConversation.messages.length ? (
         selectedConversation.messages.map(
           (message: IMessage, index: number) => (
             <MessageBox
@@ -85,7 +88,7 @@ const MainSection = () => {
         )
       ) : (
         <></>
-      )} */}
+      )}
       {!selectedConversation ? homePageContentMap[selectedHomeOption] : <></>}
     </>
   );

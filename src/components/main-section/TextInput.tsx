@@ -1,7 +1,9 @@
-import { useEffect, useState } from 'react';
+import { SocketContext } from '@context/socket.ctx';
+import { useContext, useEffect, useState } from 'react';
 
 const TextInput = () => {
   const [message, setMessage] = useState('');
+  const { selectedConversation } = useContext(SocketContext);
 
   useEffect(() => {
     const textInput = document.getElementById('textInput');
@@ -27,13 +29,14 @@ const TextInput = () => {
 
     try {
       const storedUser = localStorage.getItem('user') || '';
-      const storedMessageData = localStorage.getItem('message') || '';
       const user = JSON.parse(storedUser);
-      const messageData = JSON.parse(storedMessageData);
       const data = {
         user,
         message: {
-          ...messageData,
+          sender: user.username,
+          recepientId: selectedConversation?.members[0].id,
+          recepientName: selectedConversation?.name,
+          sent: false,
           text: message,
         },
       };
