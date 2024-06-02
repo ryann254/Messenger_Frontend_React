@@ -8,7 +8,9 @@ import { SocketContext } from '@context/socket.ctx';
 import { useContext, useEffect } from 'react';
 
 const Home = () => {
-  const { selectedConversation } = useContext(SocketContext);
+  const { selectedConversation, isConversationMember } =
+    useContext(SocketContext);
+  console.log(selectedConversation);
 
   useEffect(() => {
     const user = {
@@ -29,13 +31,13 @@ const Home = () => {
   }, []);
 
   return (
-    <div className='overflow-hidden'>
+    <div className='overflow-hidden relative'>
       {/* <Navbar/> and <Sidebar /> components*/}
       <Navbar />
       <div className='h-[85vh] px-6 overflow-x-hidden overflow-y-scroll min-h-full'>
         <MainSection />
       </div>
-      {selectedConversation ? <TextInput /> : <></>}
+      {selectedConversation && isConversationMember ? <TextInput /> : <></>}
     </div>
   );
 };

@@ -8,7 +8,7 @@ import Nami from '@assets/nami.jpg';
 import Chopper from '@assets/chopper.jpg';
 import Usopp from '@assets/usopp.jpg';
 
-const Member = ({
+export const Member = ({
   title,
   members,
 }: {

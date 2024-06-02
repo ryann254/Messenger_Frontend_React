@@ -16,6 +16,8 @@ interface ISocketContext {
   >;
   selectedHomeOption: string;
   setSelectedHomeOption: React.Dispatch<React.SetStateAction<string>>;
+  isConversationMember: boolean;
+  setIsConversationMember: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const SocketContext = createContext<ISocketContext>({
@@ -25,6 +27,8 @@ export const SocketContext = createContext<ISocketContext>({
   setSelectedConversation: () => {},
   selectedHomeOption: '',
   setSelectedHomeOption: () => {},
+  isConversationMember: false,
+  setIsConversationMember: () => {},
 });
 
 export const SocketContextProvider = ({ children }: Props) => {
@@ -44,6 +48,7 @@ export const SocketContextProvider = ({ children }: Props) => {
   const [selectedConversation, setSelectedConversation] =
     useState<IConversation>();
   const [selectedHomeOption, setSelectedHomeOption] = useState('Explore');
+  const [isConversationMember, setIsConversationMember] = useState(false);
 
   const onDisconnect = () => {
     setIsConnected(false);
@@ -119,6 +124,8 @@ export const SocketContextProvider = ({ children }: Props) => {
         setSelectedConversation,
         selectedHomeOption,
         setSelectedHomeOption,
+        isConversationMember,
+        setIsConversationMember,
       }}
     >
       {children}

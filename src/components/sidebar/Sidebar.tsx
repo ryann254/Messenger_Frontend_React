@@ -2,6 +2,7 @@ import { useContext, useState } from 'react';
 import Avatar from '@assets/Avatar-2.png';
 import { SocketContext } from '@context/socket.ctx';
 import { IConversation } from '@interfaces/convesation';
+import ConversationCircle from './ConversationCircle';
 
 const DiscoverSection = ({ homeOptions }: { homeOptions: IHomeOptions[] }) => {
   const { selectedHomeOption, setSelectedHomeOption } =
@@ -222,25 +223,13 @@ const Sidebar = () => {
                     htmlFor='my-drawer'
                     aria-label='close sidebar'
                   >
-                    <div
-                      className={`h-9 w-9 cursor-pointer rounded-full flex justify-center items-center text-white font-semibold text-xl ${
-                        sidebarSelection.name === conversation.name
-                          ? 'scale-125 opacity-100 mt-6'
-                          : 'opacity-70 mt-5'
-                      }`}
-                      style={{
-                        backgroundColor: randomColorsGenerator(),
-                      }}
-                      onClick={() =>
-                        handleSidebarSelection(
-                          conversation.name,
-                          index,
-                          conversation
-                        )
-                      }
-                    >
-                      {conversation.name[0]}
-                    </div>
+                    <ConversationCircle
+                      sidebarSelection={sidebarSelection}
+                      handleSidebarSelection={handleSidebarSelection}
+                      index={index}
+                      conversation={conversation}
+                      randomColorsGenerator={randomColorsGenerator}
+                    />
                   </label>
                 ))
               ) : (

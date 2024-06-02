@@ -4,7 +4,10 @@ import MessageBox from './MessageBox';
 import { IUser } from '@interfaces/user';
 import { SocketContext } from '@context/socket.ctx';
 import CreateConversationModal from './CreateConversationModal';
-// import TextInput from './TextInput';
+import { IConversation } from '@interfaces/convesation';
+import { Member } from '@components/channel-info/ChannelInfo';
+import JoinConversation from './JoinConversation';
+import WelcomeScreenModal from './WelcomeScreenModal';
 
 interface IConversationMember extends IUser {
   username: string;
@@ -15,8 +18,17 @@ interface IConversationMember extends IUser {
 }
 
 const MainSection = () => {
-  const { selectedConversation, selectedHomeOption } =
+  const homePageContentMap: Record<string, JSX.Element> = {
+    Explore: <>Explore page</>,
+    Gaming: <>Gaming page</>,
+    Working: <>Working page</>,
+    Entertainment: <>Entertainment page</>,
+    Hobby: <>Hobby page</>,
+  };
+
+  const { selectedConversation, selectedHomeOption, isConversationMember } =
     useContext(SocketContext);
+  console.log(isConversationMember);
   // const generatePassword = (length = 8) => {
   //   // Define the character sets
   //   const lowercase = 'abcdefghijklmnopqrstuvwxyz';
@@ -54,7 +66,9 @@ const MainSection = () => {
   return (
     <>
       <CreateConversationModal />
-      {selectedConversation && selectedConversation.messages.length ? (
+      <WelcomeScreenModal />
+      {!isConversationMember ? <JoinConversation /> : <></>}
+      {/* {selectedConversation && selectedConversation.messages.length ? (
         selectedConversation.messages.map(
           (message: IMessage, index: number) => (
             <MessageBox
@@ -71,18 +85,8 @@ const MainSection = () => {
         )
       ) : (
         <></>
-      )}
-      {!selectedConversation ? (
-        <>
-          {selectedHomeOption === 'Explore' && <>Explore page</>}
-          {selectedHomeOption === 'Gaming' && <>Gaming page</>}
-          {selectedHomeOption === 'Working' && <>Working page</>}
-          {selectedHomeOption === 'Entertainment' && <>Entertainment page</>}
-          {selectedHomeOption === 'Hobby' && <>Hobby page</>}
-        </>
-      ) : (
-        <></>
-      )}
+      )} */}
+      {!selectedConversation ? homePageContentMap[selectedHomeOption] : <></>}
     </>
   );
 };
