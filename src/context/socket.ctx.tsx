@@ -50,14 +50,14 @@ export const SocketContextProvider = ({ children }: Props) => {
 
   // Checks if a user is a member of a conversation before joining.
   const onConversationMemberCheck = (
-    convesation: IConversation | undefined
+    conversation: IConversation | undefined
   ) => {
-    if (convesation) {
-      const isMember = convesation.members.find(
-        (member) => member.id === loggedInUser.id
+    if (conversation) {
+      const isMember = conversation.members.find(
+        (member) => member._id === loggedInUser.id
       );
       setIsConversationMember(isMember ? true : false);
-      setSelectedConversation(convesation);
+      setSelectedConversation(conversation);
     } else {
       setSelectedConversation(undefined);
       setIsConversationMember(false);

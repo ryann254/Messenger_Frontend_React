@@ -20,7 +20,6 @@ const CreateConversationModal = () => {
           members: [user.id],
         },
       };
-      console.log(data, 'conversation data');
 
       const result = await fetch(
         `${import.meta.env.VITE_BACKEND_URL}/api/v1/conversation`,
@@ -35,7 +34,7 @@ const CreateConversationModal = () => {
 
       if (result.ok) setConversationName('');
     } catch (error) {
-      console.log('Error creating conversation', error);
+      console.error('Error creating conversation', error);
     }
   };
 

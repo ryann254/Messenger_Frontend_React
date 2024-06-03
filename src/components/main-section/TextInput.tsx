@@ -26,6 +26,7 @@ const TextInput = () => {
     if (message === '') {
       return;
     }
+    console.log(selectedConversation);
 
     try {
       const storedUser = localStorage.getItem('user') || '';
@@ -34,8 +35,9 @@ const TextInput = () => {
         user,
         message: {
           sender: user.username,
-          recepientId: selectedConversation?.members[0].id,
+          recipientId: selectedConversation?.members[0]._id,
           recepientName: selectedConversation?.name,
+          conversationId: selectedConversation?._id,
           sent: false,
           text: message,
         },
