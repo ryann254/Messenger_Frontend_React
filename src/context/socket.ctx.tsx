@@ -16,6 +16,7 @@ interface ISocketContext {
   isConversationMember: boolean;
   setIsConversationMember: React.Dispatch<React.SetStateAction<boolean>>;
   onConversationMemberCheck: (conversation: IConversation | undefined) => void;
+  onConversationUpdated: (conversation: IConversation | undefined) => void;
 }
 
 export const SocketContext = createContext<ISocketContext>({
@@ -27,6 +28,7 @@ export const SocketContext = createContext<ISocketContext>({
   isConversationMember: false,
   setIsConversationMember: () => {},
   onConversationMemberCheck: () => {},
+  onConversationUpdated: () => {},
 });
 
 export const SocketContextProvider = ({ children }: Props) => {
@@ -47,6 +49,7 @@ export const SocketContextProvider = ({ children }: Props) => {
     useState<IConversation>();
   const [selectedHomeOption, setSelectedHomeOption] = useState('Explore');
   const [isConversationMember, setIsConversationMember] = useState(false);
+  console.log(selectedConversation);
 
   // Checks if a user is a member of a conversation before joining.
   const onConversationMemberCheck = (
@@ -78,6 +81,22 @@ export const SocketContextProvider = ({ children }: Props) => {
         ...currentConversations,
         conversation,
       ]);
+    }
+  };
+
+  const onConversationUpdated = (
+    updatedConversation: IConversation | undefined
+  ) => {
+    if (updatedConversation) {
+      setConversations((currentConversations) => {
+        const index = currentConversations.findIndex(
+          (conversation) => conversation._id === updatedConversation._id
+        );
+        if (index !== -1) {
+          currentConversations[index] = updatedConversation;
+        }
+        return currentConversations;
+      });
     }
   };
 
@@ -140,6 +159,7 @@ export const SocketContextProvider = ({ children }: Props) => {
         isConversationMember,
         setIsConversationMember,
         onConversationMemberCheck,
+        onConversationUpdated,
       }}
     >
       {children}

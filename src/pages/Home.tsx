@@ -13,19 +13,12 @@ const Home = () => {
 
   useEffect(() => {
     const user = {
-      id: '66509d55ff0ba06ddcd36f48',
-      username: 'Timothy_Schaefer91',
-      email: 'Jerel51@gmail.com',
+      id: '665dc9c2ecc3ae6c191d2731',
+      username: 'Kennith_Abbott',
+      email: 'Krystel87@hotmail.com',
     };
 
-    const message = {
-      sender: 'Timothy_Schaefer91',
-      recipientId: '66509d89ff0ba06ddcd36f4b',
-      recipientName: 'Sabryna.Kemmer68',
-      sent: false,
-    };
     localStorage.setItem('user', JSON.stringify(user));
-    localStorage.setItem('message', JSON.stringify(message));
   }, []);
 
   return (

@@ -7,8 +7,11 @@ import { useContext } from 'react';
 import { SocketContext } from '@context/socket.ctx';
 
 const JoinConversation = () => {
-  const { selectedConversation, setIsConversationMember } =
-    useContext(SocketContext);
+  const {
+    selectedConversation,
+    setIsConversationMember,
+    onConversationUpdated,
+  } = useContext(SocketContext);
 
   const members: string[] = [Sanji, Luffy, Brook, Franky];
   const randomColors: string[] = [
@@ -31,10 +34,40 @@ const JoinConversation = () => {
     return randomColors[Math.floor(Math.random() * randomColors.length)];
   };
 
-  const hanldeJoinConversation = () => {
-    setIsConversationMember(true);
-    // @ts-expect-error showModal is a function that comes with daisyui.
-    document.getElementById('my_modal_4')?.showModal();
+  const hanldeJoinConversation = async () => {
+    try {
+      const newMembers = selectedConversation?.members || [];
+      const user = JSON.parse(localStorage.getItem('user') || '');
+      newMembers.push(user.id);
+      const data = {
+        user,
+        conversation: {
+          name: selectedConversation?.name,
+          members: newMembers,
+        },
+      };
+
+      const result = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/v1/conversation`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        }
+      );
+      const updatedConversation = await result.json();
+
+      if (result.ok) {
+        onConversationUpdated(updatedConversation);
+        setIsConversationMember(true);
+        // @ts-expect-error showModal is a function that comes with daisyui.
+        document.getElementById('my_modal_4')?.showModal();
+      }
+    } catch (error) {
+      console.error('Error creating conversation', error);
+    }
   };
 
   return (

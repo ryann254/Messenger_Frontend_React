@@ -11,8 +11,7 @@ const CreateConversationModal = () => {
     }
 
     try {
-      const userData = localStorage.getItem('user') || '';
-      const user = JSON.parse(userData);
+      const user = JSON.parse(localStorage.getItem('user') || '');
       const data = {
         user,
         conversation: {
