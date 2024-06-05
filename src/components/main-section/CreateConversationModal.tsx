@@ -16,7 +16,7 @@ const CreateConversationModal = () => {
         user,
         conversation: {
           name: conversationName,
-          members: [user.id],
+          members: [user._id],
         },
       };
 

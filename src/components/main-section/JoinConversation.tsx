@@ -36,11 +36,18 @@ const JoinConversation = () => {
 
   const hanldeJoinConversation = async () => {
     try {
-      const newMembers = selectedConversation?.members || [];
+      const newMembers: string[] = [];
+      selectedConversation?.members.forEach((member) => {
+        newMembers.push(member._id);
+      });
       const user = JSON.parse(localStorage.getItem('user') || '');
-      newMembers.push(user.id);
+      newMembers.push(user._id);
+
       const data = {
-        user,
+        user: {
+          ...user,
+          conversation: [...user.conversation, selectedConversation?._id],
+        },
         conversation: {
           name: selectedConversation?.name,
           members: newMembers,
@@ -48,9 +55,11 @@ const JoinConversation = () => {
       };
 
       const result = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/v1/conversation`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/v1/conversation/${
+          selectedConversation?._id
+        }`,
         {
-          method: 'POST',
+          method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
           },

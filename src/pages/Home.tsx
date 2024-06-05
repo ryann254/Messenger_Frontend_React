@@ -10,15 +10,18 @@ import { useContext, useEffect } from 'react';
 const Home = () => {
   const { selectedConversation, isConversationMember } =
     useContext(SocketContext);
+  const userId = '66605dd9a4497dcb344907d7';
+  const fetchUser = async () => {
+    const result = await fetch(
+      `${import.meta.env.VITE_BACKEND_URL}/api/v1/user/${userId}`
+    );
+    const user = await result.json();
+
+    if (result.ok) localStorage.setItem('user', JSON.stringify(user));
+  };
 
   useEffect(() => {
-    const user = {
-      id: '665dc9c2ecc3ae6c191d2731',
-      username: 'Kennith_Abbott',
-      email: 'Krystel87@hotmail.com',
-    };
-
-    localStorage.setItem('user', JSON.stringify(user));
+    fetchUser();
   }, []);
 
   return (

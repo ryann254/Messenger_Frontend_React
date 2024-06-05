@@ -26,11 +26,9 @@ const TextInput = () => {
     if (message === '') {
       return;
     }
-    console.log(selectedConversation);
 
     try {
-      const storedUser = localStorage.getItem('user') || '';
-      const user = JSON.parse(storedUser);
+      const user = JSON.parse(localStorage.getItem('user') || '');
       const data = {
         user,
         message: {
