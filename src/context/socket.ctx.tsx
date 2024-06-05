@@ -37,7 +37,7 @@ export const SocketContextProvider = ({ children }: Props) => {
 
   const socket = io(import.meta.env.VITE_BACKEND_URL, {
     auth: {
-      userId: loggedInUser.id,
+      userId: loggedInUser._id,
     },
     transports: ['websocket', 'polling'],
     withCredentials: true,
@@ -57,7 +57,7 @@ export const SocketContextProvider = ({ children }: Props) => {
   ) => {
     if (conversation) {
       const isMember = conversation.members.find(
-        (member) => member._id === loggedInUser.id
+        (member) => member._id === loggedInUser._id
       );
       setIsConversationMember(isMember ? true : false);
       setSelectedConversation(conversation);
