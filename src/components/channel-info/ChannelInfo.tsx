@@ -114,12 +114,7 @@ const ChannelInfo = () => {
                 <h4 className='text-[#7D7A89] font-semibold py-2.5'>
                   Description
                 </h4>
-                <span>
-                  "One Piece" is a legendary high-seas adventure manga and anime
-                  series about Monkey D. Luffy and his crew, the Straw Hat
-                  Pirates, embarking on a quest to find the One Piece, the
-                  ultimate treasure, to become the Pirate King.
-                </span>
+                <span>{selectedConversation?.description}</span>
               </div>
             </div>
             {/* Members */}

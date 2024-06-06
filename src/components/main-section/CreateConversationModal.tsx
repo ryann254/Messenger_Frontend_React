@@ -3,10 +3,12 @@ import { useState } from 'react';
 
 const CreateConversationModal = () => {
   const [conversationName, setConversationName] = useState('');
+  const [tag, setTag] = useState('gaming');
+  const [description, setDescription] = useState('');
 
   // TODO: Add a popup message to show success or errors
   const handleCreateConversation = async () => {
-    if (!conversationName) {
+    if (!conversationName || !description) {
       return;
     }
 
@@ -16,6 +18,8 @@ const CreateConversationModal = () => {
         user,
         conversation: {
           name: conversationName,
+          tag,
+          description,
           members: [user._id],
         },
       };
@@ -39,7 +43,7 @@ const CreateConversationModal = () => {
 
   return (
     <dialog id='my_modal_3' className='modal'>
-      <div className='modal-box w-full h-[55%] max-h-full absolute bottom-0 rounded-b-none p-0'>
+      <div className='modal-box w-full h-[78%] max-h-full absolute bottom-0 rounded-b-none p-0'>
         <div className='p-6'>
           <h3 className='text-lg text-center tracking-wide font-bold'>
             Create a Conversation
@@ -56,7 +60,7 @@ const CreateConversationModal = () => {
           </div>
           <div className='flex flex-col mb-2'>
             <label
-              htmlFor='serverName'
+              htmlFor='conversationName'
               className='text-sm text-black/[.5] font-bold my-2'
             >
               Conversation Name
@@ -68,6 +72,34 @@ const CreateConversationModal = () => {
               value={conversationName}
               onChange={(e) => setConversationName(e.target.value)}
               placeholder='Eg. Zoro fan club'
+            />
+            <label
+              htmlFor='tag'
+              className='text-sm text-black/[.5] font-bold mt-4 mb-2'
+            >
+              Kindly choose a tag
+            </label>
+            <select
+              className='select focus:border-none focus:outline-none select-bordered border-[#D8E0E8] w-full bg-[#F1F5F9]'
+              defaultValue='gaming'
+              onChange={(e) => setTag(e.target.value)}
+            >
+              <option value='gaming'>Gaming</option>
+              <option value='entertainment'>Entertainment</option>
+              <option value='working'>Working</option>
+              <option value='hobby'>Hobby</option>
+            </select>
+            <label
+              htmlFor='tag'
+              className='text-sm text-black/[.5] font-bold mt-4 mb-2'
+            >
+              Description
+            </label>
+            <textarea
+              value={description}
+              className='textarea textarea-bordered focus:border-none focus:outline-none border-[#D8E0E8] bg-[#F1F5F9] w-full'
+              placeholder='This conversation is about...'
+              onChange={(e) => setDescription(e.target.value)}
             />
           </div>
           <span className='text-[13px] text-black/[.5]'>

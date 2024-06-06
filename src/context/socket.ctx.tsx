@@ -74,12 +74,23 @@ export const SocketContextProvider = ({ children }: Props) => {
     setConversations(conversations);
   };
 
-  const onConversationCreated = (conversation: IConversation) => {
+  const onConversationCreated = async (conversation: IConversation) => {
     if (conversation) {
-      setConversations((currentConversations) => [
-        ...currentConversations,
-        conversation,
-      ]);
+      // When a Conversation is created, Socket IO's mongodb adapter give us the Conversation document where members are not populated.
+      // Hence we have to refetch the conversation with populated members.
+      const result = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/v1/conversation/${
+          conversation._id
+        }`
+      );
+      const populatedConversation = await result.json();
+
+      if (result.ok) {
+        setConversations((currentConversations) => [
+          ...currentConversations,
+          populatedConversation,
+        ]);
+      }
     }
   };
 
