@@ -6,6 +6,11 @@ import { SocketContext } from '@context/socket.ctx';
 import CreateConversationModal from './CreateConversationModal';
 import JoinConversation from './JoinConversation';
 import WelcomeScreenModal from './WelcomeScreenModal';
+import ExplorePage from './home-sections/ExplorePage';
+import GamingPage from './home-sections/GamingPage';
+import WorkingPage from './home-sections/WorkingPage';
+import EntertainmentPage from './home-sections/EntertainmentPage';
+import HobbyPage from './home-sections/HobbyPage';
 
 interface IConversationMember extends IUser {
   username: string;
@@ -17,11 +22,11 @@ interface IConversationMember extends IUser {
 
 const MainSection = () => {
   const homePageContentMap: Record<string, JSX.Element> = {
-    Explore: <>Explore page</>,
-    Gaming: <>Gaming page</>,
-    Working: <>Working page</>,
-    Entertainment: <>Entertainment page</>,
-    Hobby: <>Hobby page</>,
+    Explore: <ExplorePage />,
+    Gaming: <GamingPage />,
+    Working: <WorkingPage />,
+    Entertainment: <EntertainmentPage />,
+    Hobby: <HobbyPage />,
   };
 
   const { selectedConversation, selectedHomeOption, isConversationMember } =
