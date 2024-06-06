@@ -1,19 +1,26 @@
 import { useContext } from 'react';
 import { SocketContext } from '@context/socket.ctx';
+import { IConversation } from '@interfaces/convesation';
 
 export const Conversation = ({
-  title,
-  description,
+  conversation,
   randomColorsGenerator,
-  members,
 }: {
-  title: string;
-  description: string;
-  members: number;
+  conversation: IConversation;
   randomColorsGenerator: () => string;
 }) => {
+  const { setSidebarSelection, onConversationMemberCheck } =
+    useContext(SocketContext);
+
+  const handleConversation = (conversation: IConversation) => {
+    setSidebarSelection(conversation.name);
+    onConversationMemberCheck(conversation);
+  };
   return (
-    <div className='flex flex-col rounded-xl border border-black/[0.2] mb-3'>
+    <div
+      className='flex flex-col rounded-xl border border-black/[0.2] mb-3 cursor-pointer'
+      onClick={() => handleConversation(conversation)}
+    >
       <div className='relative w-full h-24'>
         <div
           className='w-full h-24 rounded-t-xl absolute top-0 left-0'
@@ -31,9 +38,11 @@ export const Conversation = ({
         </div>
       </div>
       <div className='flex flex-col my-5 px-4'>
-        <h3 className='text-lg font-semibold'>{title}</h3>
-        <span className='text-black/[.5] my-2'>{description}</span>
-        <span className='font-semibold'>{members} members</span>
+        <h3 className='text-lg font-semibold'>{conversation.name}</h3>
+        <span className='text-black/[.5] my-2'>{conversation.description}</span>
+        <span className='font-semibold'>
+          {conversation.members.length} members
+        </span>
       </div>
     </div>
   );
@@ -67,9 +76,7 @@ const ExplorePage = () => {
         conversations.map((conversation, index) => (
           <Conversation
             key={index + conversation.name}
-            title={conversation.name}
-            description='Join our conversation to share and engage in this gaming conversation'
-            members={conversation.members.length}
+            conversation={conversation}
             randomColorsGenerator={randomColorsGenerator}
           />
         ))

@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import Avatar from '@assets/Avatar-2.png';
 import { SocketContext } from '@context/socket.ctx';
 import { IConversation } from '@interfaces/convesation';
@@ -44,7 +44,7 @@ const ConversationSection = ({
   conversation,
   channel,
 }: {
-  conversation: IConversation;
+  conversation: IConversation | undefined;
   channel: IChannel;
 }) => {
   return (
@@ -52,7 +52,7 @@ const ConversationSection = ({
       <div className='flex items-center border-b border-white/[.3] py-3.5 pb-2.5'>
         <div className='flex flex-col w-[95%]'>
           <div className='text-xl text-white font-semibold tracking-wide text-ellipsis text-nowrap overflow-hidden w-[70%]'>
-            {conversation.name}
+            {conversation?.name}
           </div>
           <span className='text-sm text-white/[.4]'>14 Members</span>
         </div>
@@ -83,11 +83,13 @@ interface IChannel {
 }
 
 const Sidebar = () => {
-  const [sidebarSelection, setsidebarSelection] = useState<
-    Record<string, string | number>
-  >({ name: 'Home', index: 0 });
-  const { conversations, onConversationMemberCheck } =
-    useContext(SocketContext);
+  const {
+    conversations,
+    onConversationMemberCheck,
+    selectedConversation,
+    sidebarSelection,
+    setSidebarSelection,
+  } = useContext(SocketContext);
 
   const channelNames: IChannel[] = [
     {
@@ -156,14 +158,13 @@ const Sidebar = () => {
 
   const handleSidebarSelection = (
     name: string,
-    index: number,
     conversation?: IConversation
   ) => {
     if (name === 'Home') {
-      setsidebarSelection({ name, index: 0 });
+      setSidebarSelection(name);
       onConversationMemberCheck(undefined);
     } else {
-      setsidebarSelection({ name, index });
+      setSidebarSelection(name);
       onConversationMemberCheck(conversation);
     }
   };
@@ -208,9 +209,9 @@ const Sidebar = () => {
             {/* Home Button */}
             <div
               className={`bg-white h-9 w-9 rounded-xl mt-4 mb-5 flex justify-center items-center ${
-                sidebarSelection.name === 'Home' ? 'opacity-100' : 'opacity-70'
+                sidebarSelection === 'Home' ? 'opacity-100' : 'opacity-70'
               }`}
-              onClick={() => handleSidebarSelection('Home', 0)}
+              onClick={() => handleSidebarSelection('Home')}
             >
               <i className='fa-solid fa-house'></i>
             </div>
@@ -260,11 +261,11 @@ const Sidebar = () => {
             <i className='fa-solid fa-gear text-white text-xl my-5 cursor-pointer'></i>
           </div>
           <div className='bg-[#110D59] w-[73%] text-white/[.3] rounded-lg px-3.5'>
-            {sidebarSelection.name === 'Home' ? (
+            {sidebarSelection === 'Home' ? (
               <DiscoverSection homeOptions={homeOptions} />
             ) : (
               <ConversationSection
-                conversation={conversations[sidebarSelection.index as number]}
+                conversation={selectedConversation}
                 channel={channelNames[0]}
               />
             )}

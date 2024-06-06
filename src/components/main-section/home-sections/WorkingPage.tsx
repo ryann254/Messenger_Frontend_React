@@ -45,9 +45,7 @@ const WorkingPage = () => {
           {workingConversations.map((conversation, index) => (
             <Conversation
               key={index + conversation.name}
-              title={conversation.name}
-              description='Join our conversation to share and engage in this gaming conversation'
-              members={conversation.members.length}
+              conversation={conversation}
               randomColorsGenerator={randomColorsGenerator}
             />
           ))}

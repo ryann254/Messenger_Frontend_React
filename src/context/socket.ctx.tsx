@@ -17,6 +17,8 @@ interface ISocketContext {
   setIsConversationMember: React.Dispatch<React.SetStateAction<boolean>>;
   onConversationMemberCheck: (conversation: IConversation | undefined) => void;
   onConversationUpdated: (conversation: IConversation | undefined) => void;
+  sidebarSelection: string;
+  setSidebarSelection: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const SocketContext = createContext<ISocketContext>({
@@ -29,6 +31,8 @@ export const SocketContext = createContext<ISocketContext>({
   setIsConversationMember: () => {},
   onConversationMemberCheck: () => {},
   onConversationUpdated: () => {},
+  sidebarSelection: 'Home',
+  setSidebarSelection: () => {},
 });
 
 export const SocketContextProvider = ({ children }: Props) => {
@@ -49,6 +53,7 @@ export const SocketContextProvider = ({ children }: Props) => {
     useState<IConversation>();
   const [selectedHomeOption, setSelectedHomeOption] = useState('Explore');
   const [isConversationMember, setIsConversationMember] = useState(false);
+  const [sidebarSelection, setSidebarSelection] = useState('Home');
 
   // Checks if a user is a member of a conversation before joining.
   const onConversationMemberCheck = (
@@ -173,6 +178,8 @@ export const SocketContextProvider = ({ children }: Props) => {
         setIsConversationMember,
         onConversationMemberCheck,
         onConversationUpdated,
+        sidebarSelection,
+        setSidebarSelection,
       }}
     >
       {children}
