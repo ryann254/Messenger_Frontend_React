@@ -10,7 +10,7 @@ import { useContext, useEffect } from 'react';
 const Home = () => {
   const { selectedConversation, isConversationMember } =
     useContext(SocketContext);
-  const userId = '66605dd9a4497dcb344907d7';
+  const userId = '666161869d833b40c6a14051';
   const fetchUser = async () => {
     const result = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/api/v1/user/${userId}`

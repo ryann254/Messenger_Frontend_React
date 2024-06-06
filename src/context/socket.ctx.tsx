@@ -87,6 +87,7 @@ export const SocketContextProvider = ({ children }: Props) => {
     updatedConversation: IConversation | undefined
   ) => {
     if (updatedConversation) {
+      // Update all the conversations
       setConversations((currentConversations) => {
         const index = currentConversations.findIndex(
           (conversation) => conversation._id === updatedConversation._id
@@ -96,6 +97,8 @@ export const SocketContextProvider = ({ children }: Props) => {
         }
         return currentConversations;
       });
+      // Update the members in a current conversation after a user has joined the conversation.
+      setSelectedConversation(updatedConversation);
     }
   };
 
