@@ -117,6 +117,7 @@ export const SocketContextProvider = ({ children }: Props) => {
       setSelectedConversation(updatedConversation);
     }
   };
+  console.log(conversations);
 
   useEffect(() => {
     const onConnect = () => {
