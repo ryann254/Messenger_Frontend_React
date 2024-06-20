@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { SocketContext } from '@context/socket.ctx';
 import { IUser } from '@interfaces/user';
 
@@ -61,7 +61,20 @@ export const Member = ({
 };
 
 const ChannelInfo = () => {
+  const [onlineMembers, setOnlineMembers] = useState<IUser[] | undefined>();
+  const [offlineMembers, setOfflineMembers] = useState<IUser[] | undefined>();
   const { selectedConversation } = useContext(SocketContext);
+
+  useEffect(() => {
+    const onlineMembers = selectedConversation?.members.filter(
+      (member) => member.online === true
+    );
+    const offlineMembers = selectedConversation?.members.filter(
+      (member) => member.online === false
+    );
+    setOnlineMembers(onlineMembers);
+    setOfflineMembers(offlineMembers);
+  }, [selectedConversation]);
   return (
     <div className='drawer drawer-end z-10'>
       <input id='my-drawer-4' type='checkbox' className='drawer-toggle' />
@@ -131,18 +144,24 @@ const ChannelInfo = () => {
               {/* Admin */}
               <Member
                 members={[selectedConversation?.members[0]]}
-                title={`Admin - ${selectedConversation?.members.length}`}
+                title={`Admin - 1`}
               />
+
               {/* Online Members */}
-              <Member
-                members={[selectedConversation?.members[0]]}
-                title={`Online - ${selectedConversation?.members.length}`}
-              />
+              {onlineMembers && (
+                <Member
+                  members={onlineMembers}
+                  title={`Online - ${onlineMembers?.length}`}
+                />
+              )}
+
               {/* Offline Members */}
-              <Member
-                members={[selectedConversation?.members[0]]}
-                title={`Offline - ${selectedConversation?.members.length}`}
-              />
+              {offlineMembers && (
+                <Member
+                  members={offlineMembers}
+                  title={`Offline - ${offlineMembers?.length}`}
+                />
+              )}
             </div>
           </div>
         </div>
