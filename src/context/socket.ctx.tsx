@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { IConversation } from '@interfaces/convesation';
 import { IMessage } from '@interfaces/message';
 import { createContext, useEffect, useState } from 'react';
@@ -19,6 +20,12 @@ interface ISocketContext {
   onConversationUpdated: (conversation: IConversation | undefined) => void;
   sidebarSelection: string;
   setSidebarSelection: React.Dispatch<React.SetStateAction<string>>;
+  message: string;
+  setMessage: React.Dispatch<React.SetStateAction<string>>;
+  isUpdating: { value: boolean; messageId: string };
+  setIsUpdating: React.Dispatch<
+    React.SetStateAction<{ value: boolean; messageId: string }>
+  >;
 }
 
 export const SocketContext = createContext<ISocketContext>({
@@ -33,6 +40,10 @@ export const SocketContext = createContext<ISocketContext>({
   onConversationUpdated: () => {},
   sidebarSelection: 'Home',
   setSidebarSelection: () => {},
+  message: '',
+  setMessage: () => {},
+  isUpdating: { value: false, messageId: '' },
+  setIsUpdating: () => {},
 });
 
 export const SocketContextProvider = ({ children }: Props) => {
@@ -54,6 +65,8 @@ export const SocketContextProvider = ({ children }: Props) => {
   const [selectedHomeOption, setSelectedHomeOption] = useState('Explore');
   const [isConversationMember, setIsConversationMember] = useState(false);
   const [sidebarSelection, setSidebarSelection] = useState('Home');
+  const [message, setMessage] = useState('');
+  const [isUpdating, setIsUpdating] = useState({ value: false, messageId: '' });
 
   // Checks if a user is a member of a conversation before joining.
   const onConversationMemberCheck = (
@@ -99,14 +112,38 @@ export const SocketContextProvider = ({ children }: Props) => {
     }
   };
 
+  // Memoize the index that matches the updatedMessage Id to avoid expensive calculations on every render.
+  const conversationIndexCache: Record<string, number> = {};
+
+  const getConversationIndex = (
+    conversations: IConversation[],
+    updatedConversationId: string
+  ) => {
+    // Check if the result is already cached
+    if (conversationIndexCache[`${updatedConversationId}`]) {
+      return conversationIndexCache[`${updatedConversationId}`];
+    }
+
+    // Compute the index if not cached
+    const index = conversations.findIndex(
+      (conversation) => conversation._id === updatedConversationId
+    );
+
+    // Cache the result
+    conversationIndexCache[`${updatedConversationId}`] = index;
+
+    return index;
+  };
+
   const onConversationUpdated = (
     updatedConversation: IConversation | undefined
   ) => {
     if (updatedConversation) {
       // Update all the conversations
       setConversations((currentConversations) => {
-        const index = currentConversations.findIndex(
-          (conversation) => conversation._id === updatedConversation._id
+        const index = getConversationIndex(
+          currentConversations,
+          updatedConversation._id
         );
         if (index !== -1) {
           currentConversations[index] = updatedConversation;
@@ -117,7 +154,47 @@ export const SocketContextProvider = ({ children }: Props) => {
       setSelectedConversation(updatedConversation);
     }
   };
-  console.log(conversations);
+
+  // Memoize the index that matches the updatedMessage Id to avoid expensive calculations on every render.
+  const messageIndexCache: Record<string, number> = {};
+
+  const getMessageIndex = (conversation: IConversation, messageId: string) => {
+    // Check if the result is already cached
+    if (messageIndexCache[`${conversation._id}-${messageId}`]) {
+      return messageIndexCache[`${conversation._id}-${messageId}`];
+    }
+
+    // Compute the index if not cached
+    const index = conversation.messages.findIndex(
+      (message) => message._id === messageId
+    );
+
+    // Cache the result
+    messageIndexCache[`${conversation._id}-${messageId}`] = index;
+
+    return index;
+  };
+
+  const onMessageUpdated = (updatedMessage: IMessage | undefined) => {
+    console.log(updatedMessage, 'updated message');
+    if (updatedMessage) {
+      setSelectedConversation((currentConversation) => {
+        if (currentConversation) {
+          const updatedMessages = [...currentConversation.messages];
+
+          const index = getMessageIndex(
+            currentConversation,
+            updatedMessage._id
+          );
+
+          if (index !== -1) {
+            updatedMessages[index] = updatedMessage;
+          }
+          return { ...currentConversation, messages: updatedMessages };
+        }
+      });
+    }
+  };
 
   useEffect(() => {
     const onConnect = () => {
@@ -153,6 +230,7 @@ export const SocketContextProvider = ({ children }: Props) => {
     socket.on('conversations', onConversations);
     socket.on('messageCreated', onMessageSent);
     socket.on('conversationCreated', onConversationCreated);
+    socket.on('messageUpdated', onMessageUpdated);
     socket.on('connect_error', (err: Error) => {
       // the reason of the error, for example "xhr poll error"
       console.error('Error', err.message);
@@ -164,6 +242,7 @@ export const SocketContextProvider = ({ children }: Props) => {
       socket.off('conversations', onConversations);
       socket.off('messageCreated', onMessageSent);
       socket.off('conversationCreated', onConversationCreated);
+      socket.off('messageUpdated', onMessageUpdated);
     };
   }, []);
 
@@ -181,6 +260,10 @@ export const SocketContextProvider = ({ children }: Props) => {
         onConversationUpdated,
         sidebarSelection,
         setSidebarSelection,
+        message,
+        setMessage,
+        isUpdating,
+        setIsUpdating,
       }}
     >
       {children}

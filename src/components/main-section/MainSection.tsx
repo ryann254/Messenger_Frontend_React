@@ -85,9 +85,7 @@ const MainSection = () => {
                 selectedConversation.members,
                 message.sender
               )}
-              message={message.text}
-              profilePic={message.media_url}
-              time={message.updatedAt}
+              message={message}
             />
           )
         )

@@ -1,22 +1,42 @@
+import { SocketContext } from '@context/socket.ctx';
+import { IMessage } from '@interfaces/message';
 import useFormattedTime from '@utils/useFormattedTime';
+import { useContext } from 'react';
 
 const MessageBox = ({
   username,
   message,
-  profilePic,
-  time,
 }: {
   username: string;
-  message: string;
-  profilePic?: string;
-  time: Date;
+  message: IMessage;
 }) => {
-  const formattedTime = useFormattedTime(new Date(time));
+  const { media_url, updatedAt, text } = message;
+  const formattedTime = useFormattedTime(new Date(updatedAt));
+  const { setIsUpdating, setMessage } = useContext(SocketContext);
+
+  const toggleVisibility = (show: boolean) => {
+    const dropDownContent = document.getElementById(
+      `dropdown-content-${message._id}`
+    );
+    if (dropDownContent) {
+      if (show) {
+        dropDownContent.classList.remove('hidden');
+      } else {
+        dropDownContent.classList.add('hidden');
+      }
+    }
+  };
+
+  const handleMessageUpdate = () => {
+    toggleVisibility(false);
+    setIsUpdating({ value: true, messageId: message._id });
+    setMessage(message.text);
+  };
   return (
     <div className='pt-5 flex items-start'>
-      {profilePic !== '' && profilePic !== undefined ? (
+      {media_url !== '' && media_url !== undefined ? (
         <img
-          src={profilePic}
+          src={media_url}
           alt='profile pic'
           className='h-11 w-11 rounded-full mr-4'
         />
@@ -31,8 +51,31 @@ const MessageBox = ({
             {username}
           </div>
           <div className='text-sm text-black/[.4]'>{formattedTime}</div>
+          <div className='ml-auto cursor-pointer dropdown dropdown-left'>
+            <i
+              tabIndex={0}
+              role='button'
+              onClick={() => toggleVisibility(true)}
+              className='fa-solid fa-ellipsis text-black/[.5]'
+            ></i>
+            <ul
+              tabIndex={0}
+              id={`dropdown-content-${message._id}`}
+              className='dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow'
+            >
+              <li
+                className='p-2 text-[#0B5FAE] rounded-lg hover:bg-[#A3D1FC]'
+                onClick={handleMessageUpdate}
+              >
+                Update
+              </li>
+              <li className='p-2 text-[#C91616] rounded-lg hover:bg-[#FBB4B4]'>
+                Delete
+              </li>
+            </ul>
+          </div>
         </div>
-        <div className='text-black/[.7] tracking-wide'>{message}</div>
+        <div className='text-black/[.7] tracking-wide'>{text}</div>
       </div>
     </div>
   );
