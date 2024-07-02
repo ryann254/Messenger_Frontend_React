@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useEffect, useRef } from 'react';
 import { IMessage } from '@interfaces/message';
 import MessageBox from './MessageBox';
 import { IUser } from '@interfaces/user';
@@ -31,31 +31,12 @@ const MainSection = () => {
 
   const { selectedConversation, selectedHomeOption, isConversationMember } =
     useContext(SocketContext);
-  // const generatePassword = (length = 8) => {
-  //   // Define the character sets
-  //   const lowercase = 'abcdefghijklmnopqrstuvwxyz';
-  //   const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  //   const numbers = '0123456789';
-  //   const symbols = '!@#$%^&*_';
+  const bottomMessageRef = useRef(null);
 
-  //   // Combine all character sets
-  //   const allCharacters = lowercase + uppercase + numbers + symbols;
-
-  //   // Ensure the password length is at least 8
-  //   if (length < 8) {
-  //     length = 8;
-  //   }
-
-  //   let password = '';
-  //   for (let i = 0; i < length; i++) {
-  //     // Generate a random index within the combined character set
-  //     const randomIndex = Math.floor(Math.random() * allCharacters.length);
-  //     // Append the character at the random index to the password
-  //     password += allCharacters[randomIndex];
-  //   }
-
-  //   return password;
-  // };
+  useEffect(() => {
+    // @ts-expect-error scrollIntoView is not defined on type 'never'
+    bottomMessageRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [selectedConversation?.messages.length]);
 
   const findUsername = (members: IConversationMember[], sender: string) => {
     const user = members.find((member) => member._id === sender);
@@ -86,6 +67,7 @@ const MainSection = () => {
                 message.sender
               )}
               message={message}
+              bottomMessageRef={bottomMessageRef}
             />
           )
         )

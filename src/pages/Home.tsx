@@ -5,12 +5,15 @@ import MainSection from '@components/main-section/MainSection';
 import Navbar from '@components/main-section/Navbar';
 import TextInput from '@components/main-section/TextInput';
 import { SocketContext } from '@context/socket.ctx';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useRef } from 'react';
 
 const Home = () => {
-  const { selectedConversation, isConversationMember } =
+  const { selectedConversation, isConversationMember, isUpdating } =
     useContext(SocketContext);
+  const bottomElementRef = useRef(null);
+
   const userId = '6673f5d4a1e52f2a15f10bc1';
+
   const fetchUser = async () => {
     const result = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/api/v1/user/${userId}`
@@ -24,6 +27,12 @@ const Home = () => {
     fetchUser();
   }, []);
 
+  useEffect(() => {
+    // Scroll to bottom of the page
+    // @ts-expect-error scrollIntoView is not defined on type 'never'
+    bottomElementRef?.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [isUpdating]);
+
   return (
     <div className='overflow-hidden relative'>
       {/* <Navbar/> and <Sidebar /> components*/}
@@ -31,7 +40,11 @@ const Home = () => {
       <div className='h-[85vh] px-6 overflow-x-hidden overflow-y-scroll min-h-full'>
         <MainSection />
       </div>
-      {selectedConversation && isConversationMember ? <TextInput /> : <></>}
+      {selectedConversation && isConversationMember ? (
+        <TextInput bottomElementRef={bottomElementRef} />
+      ) : (
+        <></>
+      )}
     </div>
   );
 };

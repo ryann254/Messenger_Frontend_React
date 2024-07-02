@@ -176,7 +176,6 @@ export const SocketContextProvider = ({ children }: Props) => {
   };
 
   const onMessageUpdated = (updatedMessage: IMessage | undefined) => {
-    console.log(updatedMessage, 'updated message');
     if (updatedMessage) {
       setSelectedConversation((currentConversation) => {
         if (currentConversation) {

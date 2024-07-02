@@ -1,7 +1,11 @@
 import { SocketContext } from '@context/socket.ctx';
 import { useContext, useEffect } from 'react';
 
-const TextInput = () => {
+const TextInput = ({
+  bottomElementRef,
+}: {
+  bottomElementRef: React.MutableRefObject<null>;
+}) => {
   const {
     selectedConversation,
     message,
@@ -96,8 +100,9 @@ const TextInput = () => {
       console.error('Error updating message', error);
     }
   };
+
   return (
-    <div className='flex px-6 py-4 relative'>
+    <div className='flex px-6 py-4 relative' ref={bottomElementRef}>
       <div className='h-14 w-14 mr-4 rounded-full border border-black/[.2] flex justify-center items-center cursor-pointer'>
         <i className='fa-solid fa-plus text-black/[.4] !font-normal text-3xl'></i>
       </div>

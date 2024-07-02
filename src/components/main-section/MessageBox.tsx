@@ -6,9 +6,11 @@ import { useContext } from 'react';
 const MessageBox = ({
   username,
   message,
+  bottomMessageRef,
 }: {
   username: string;
   message: IMessage;
+  bottomMessageRef: React.MutableRefObject<null>;
 }) => {
   const { media_url, updatedAt, text } = message;
   const formattedTime = useFormattedTime(new Date(updatedAt));
@@ -33,7 +35,7 @@ const MessageBox = ({
     setMessage(message.text);
   };
   return (
-    <div className='pt-5 flex items-start'>
+    <div className='pt-5 flex items-start' ref={bottomMessageRef}>
       {media_url !== '' && media_url !== undefined ? (
         <img
           src={media_url}
