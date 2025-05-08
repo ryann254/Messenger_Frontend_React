@@ -1,5 +1,16 @@
 import UploadImage from '@assets/upload-image.png';
+import { IUser } from '@interfaces/user';
 import { useState } from 'react';
+
+interface ConversationData {
+  user: IUser;
+  conversation: {
+    name: string;
+    tag: string;
+    description: string;
+    members: string[];
+  };
+}
 
 const CreateConversationModal = () => {
   const [conversationName, setConversationName] = useState('');
@@ -14,7 +25,7 @@ const CreateConversationModal = () => {
 
     try {
       const user = JSON.parse(localStorage.getItem('user') || '');
-      const data = {
+      const data: ConversationData = {
         user,
         conversation: {
           name: conversationName,

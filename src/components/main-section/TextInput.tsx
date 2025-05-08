@@ -1,5 +1,18 @@
 import { SocketContext } from '@context/socket.ctx';
+import { IUser } from '@interfaces/user';
 import { useContext, useEffect } from 'react';
+
+interface MessageData {
+  user: IUser;
+  message: {
+    sender: string;
+    recipientId: string;
+    recipientName: string;
+    conversationId: string;
+    text: string;
+    sent: boolean;
+  };
+}
 
 const TextInput = ({
   bottomElementRef,
@@ -38,13 +51,13 @@ const TextInput = ({
 
     try {
       const user = JSON.parse(localStorage.getItem('user') || '');
-      const data = {
+      const data: MessageData = {
         user,
         message: {
           sender: user._id,
           recipientId: selectedConversation?.members[0]._id,
-          recepientName: selectedConversation?.name,
-          conversationId: selectedConversation?._id,
+          recipientName: selectedConversation?.name || '',
+          conversationId: selectedConversation?._id || '',
           sent: false,
           text: message,
         },
@@ -68,12 +81,13 @@ const TextInput = ({
   const handleMessageUpdate = async () => {
     try {
       const user = JSON.parse(localStorage.getItem('user') || '');
-      const data = {
+      const data: MessageData = {
         user: user,
         message: {
           sender: user._id,
           recipientId: selectedConversation?.members[0]._id,
-          recipientName: selectedConversation?.name,
+          recipientName: selectedConversation?.name || '',
+          conversationId: selectedConversation?._id || '',
           text: message,
           sent: true,
         },

@@ -89,6 +89,7 @@ export const SocketContextProvider = ({ children }: Props) => {
   };
 
   const onConversations = (conversations: IConversation[]) => {
+    console.log(conversations);
     setConversations(conversations);
   };
 
