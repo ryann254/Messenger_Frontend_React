@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { IConversation } from '@interfaces/convesation';
-import { IMessage } from '@interfaces/message';
-import { createContext, useEffect, useState } from 'react';
-import { io } from 'socket.io-client';
+import { IConversation } from "@interfaces/convesation";
+import { IMessage } from "@interfaces/message";
+import { createContext, useEffect, useState, useRef } from "react";
+import { io } from "socket.io-client";
 
 type Props = {
   children: React.ReactNode;
@@ -32,41 +32,128 @@ export const SocketContext = createContext<ISocketContext>({
   isConnected: false,
   conversations: [],
   selectedConversation: undefined,
-  selectedHomeOption: '',
+  selectedHomeOption: "",
   setSelectedHomeOption: () => {},
   isConversationMember: false,
   setIsConversationMember: () => {},
   onConversationMemberCheck: () => {},
   onConversationUpdated: () => {},
-  sidebarSelection: 'Home',
+  sidebarSelection: "Home",
   setSidebarSelection: () => {},
-  message: '',
+  message: "",
   setMessage: () => {},
-  isUpdating: { value: false, messageId: '' },
+  isUpdating: { value: false, messageId: "" },
   setIsUpdating: () => {},
 });
 
 export const SocketContextProvider = ({ children }: Props) => {
   // Connect to the io Server.
-  const loggedInUser = JSON.parse(localStorage.getItem('user') || '');
+  const loggedInUser = (() => {
+    try {
+      const userData = localStorage.getItem("user");
+      if (!userData) return null;
+      return JSON.parse(userData);
+    } catch (error) {
+      console.error("Error parsing user data from localStorage:", error);
+      return null;
+    }
+  })();
 
-  const socket = io(import.meta.env.VITE_BACKEND_URL, {
-    auth: {
-      userId: loggedInUser._id,
-    },
-    transports: ['websocket', 'polling'],
-    withCredentials: true,
-  });
-
-  const [isConnected, setIsConnected] = useState(socket.connected);
+  // Use useRef instead of useState for socket
+  const socketRef = useRef<any>(null);
+  const [isConnected, setIsConnected] = useState(false);
   const [conversations, setConversations] = useState<IConversation[]>([]);
   const [selectedConversation, setSelectedConversation] =
     useState<IConversation>();
-  const [selectedHomeOption, setSelectedHomeOption] = useState('Explore');
+  const [selectedHomeOption, setSelectedHomeOption] = useState("Explore");
   const [isConversationMember, setIsConversationMember] = useState(false);
-  const [sidebarSelection, setSidebarSelection] = useState('Home');
-  const [message, setMessage] = useState('');
-  const [isUpdating, setIsUpdating] = useState({ value: false, messageId: '' });
+  const [sidebarSelection, setSidebarSelection] = useState("Home");
+  const [message, setMessage] = useState("");
+  const [isUpdating, setIsUpdating] = useState({ value: false, messageId: "" });
+
+  // Initialize socket connection
+  useEffect(() => {
+    console.log("Socket effect running, loggedInUser:", loggedInUser);
+    if (!loggedInUser) {
+      console.log("No logged in user, returning");
+      return;
+    }
+
+    // Only create socket if it doesn't exist
+    if (!socketRef.current) {
+      console.log("Creating new socket connection");
+      const socketInstance = io(import.meta.env.VITE_BACKEND_URL, {
+        auth: {
+          userId: loggedInUser._id,
+        },
+        transports: ["websocket", "polling"],
+        withCredentials: true,
+        reconnection: true,
+        reconnectionAttempts: 5,
+        reconnectionDelay: 1000,
+      });
+
+      // Set up event listeners
+      const onConnect = () => {
+        console.log("Socket connected");
+        setIsConnected(true);
+      };
+
+      const onDisconnect = () => {
+        console.log("Socket disconnected");
+        setIsConnected(false);
+      };
+
+      const onMessageSent = (messageDocument: IMessage) => {
+        if (messageDocument) {
+          setSelectedConversation((currentConversation) => {
+            if (currentConversation?._id === messageDocument.conversation) {
+              return {
+                ...currentConversation,
+                messages: [...currentConversation.messages, messageDocument],
+              };
+            }
+            return currentConversation;
+          });
+        }
+      };
+
+      const onConversationsReceived = (conversations: IConversation[]) => {
+        console.log("Received conversations:", conversations);
+        setConversations(conversations);
+      };
+
+      // Set up all event listeners
+      socketInstance.on("connect", onConnect);
+      socketInstance.on("disconnect", onDisconnect);
+      socketInstance.on("conversations", onConversationsReceived);
+      socketInstance.on("messageCreated", onMessageSent);
+      socketInstance.on("conversationCreated", onConversationCreated);
+      socketInstance.on("messageUpdated", onMessageUpdated);
+      socketInstance.on("connect_error", (err: Error) => {
+        console.error("Connection error:", err.message);
+      });
+
+      socketRef.current = socketInstance;
+    }
+
+    // Cleanup function - only run when component is actually unmounting
+    return () => {
+      const currentSocket = socketRef.current;
+      if (currentSocket) {
+        console.log("Component unmounting, cleaning up socket");
+        currentSocket.off("connect");
+        currentSocket.off("disconnect");
+        currentSocket.off("conversations");
+        currentSocket.off("messageCreated");
+        currentSocket.off("conversationCreated");
+        currentSocket.off("messageUpdated");
+        currentSocket.off("connect_error");
+        currentSocket.disconnect();
+        socketRef.current = null;
+      }
+    };
+  }, []); // Empty dependency array - only run on mount/unmount
 
   // Checks if a user is a member of a conversation before joining.
   const onConversationMemberCheck = (
@@ -82,15 +169,6 @@ export const SocketContextProvider = ({ children }: Props) => {
       setSelectedConversation(undefined);
       setIsConversationMember(false);
     }
-  };
-
-  const onDisconnect = () => {
-    setIsConnected(false);
-  };
-
-  const onConversations = (conversations: IConversation[]) => {
-    console.log(conversations);
-    setConversations(conversations);
   };
 
   const onConversationCreated = async (conversation: IConversation) => {
@@ -195,56 +273,6 @@ export const SocketContextProvider = ({ children }: Props) => {
       });
     }
   };
-
-  useEffect(() => {
-    const onConnect = () => {
-      setIsConnected(true);
-
-      // Check the transport protocol that is being used.
-      const transport = socket.io.engine.transport.name; // in most cases, "polling"
-      console.log('main transport', transport);
-
-      socket.io.engine.on('upgrade', () => {
-        const upgradedTransport = socket.io.engine.transport.name; // in most cases, "websocket"
-        console.log('upgraded transport', upgradedTransport);
-      });
-    };
-
-    const onMessageSent = (messageDocument: IMessage) => {
-      if (messageDocument) {
-        // Find the conversation that matches the provided ID
-        setSelectedConversation((currentConversation) => {
-          if (currentConversation?._id === messageDocument.conversation) {
-            return {
-              ...currentConversation,
-              messages: [...currentConversation.messages, messageDocument],
-            };
-          }
-          return currentConversation;
-        });
-      }
-    };
-
-    socket.on('connect', onConnect);
-    socket.on('disconnect', onDisconnect);
-    socket.on('conversations', onConversations);
-    socket.on('messageCreated', onMessageSent);
-    socket.on('conversationCreated', onConversationCreated);
-    socket.on('messageUpdated', onMessageUpdated);
-    socket.on('connect_error', (err: Error) => {
-      // the reason of the error, for example "xhr poll error"
-      console.error('Error', err.message);
-    });
-
-    return () => {
-      socket.off('connect', onConnect);
-      socket.off('disconnect', onDisconnect);
-      socket.off('conversations', onConversations);
-      socket.off('messageCreated', onMessageSent);
-      socket.off('conversationCreated', onConversationCreated);
-      socket.off('messageUpdated', onMessageUpdated);
-    };
-  }, []);
 
   return (
     <SocketContext.Provider

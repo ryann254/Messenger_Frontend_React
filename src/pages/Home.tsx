@@ -1,18 +1,19 @@
 // import ChannelInfo from '@components/ChannelInfo';
-import MainSection from '@components/main-section/MainSection';
+import MainSection from "@components/main-section/MainSection";
 // import Sidebar from '@components/Sidebar';
 
-import Navbar from '@components/main-section/Navbar';
-import TextInput from '@components/main-section/TextInput';
-import { SocketContext } from '@context/socket.ctx';
-import { useContext, useEffect, useRef } from 'react';
+import Navbar from "@components/main-section/Navbar";
+import TextInput from "@components/main-section/TextInput";
+import { SocketContext } from "@context/socket.ctx";
+import { useContext, useEffect, useRef } from "react";
 
 const Home = () => {
   const { selectedConversation, isConversationMember, isUpdating } =
     useContext(SocketContext);
   const bottomElementRef = useRef(null);
 
-  const userId = '6673f5d4a1e52f2a15f10bc1';
+  // TODO: Fetch the first 10 users and display their conversations.
+  const userId = "681cc4890829ba6228ff9577";
 
   const fetchUser = async () => {
     const result = await fetch(
@@ -20,24 +21,27 @@ const Home = () => {
     );
     const user = await result.json();
 
-    if (result.ok) localStorage.setItem('user', JSON.stringify(user));
+    if (result.ok) localStorage.setItem("user", JSON.stringify(user));
   };
 
   useEffect(() => {
-    fetchUser();
+    const user = localStorage.getItem("user");
+    if (!user) {
+      fetchUser();
+    }
   }, []);
 
   useEffect(() => {
     // Scroll to bottom of the page
     // @ts-expect-error scrollIntoView is not defined on type 'never'
-    bottomElementRef?.current?.scrollIntoView({ behavior: 'smooth' });
+    bottomElementRef?.current?.scrollIntoView({ behavior: "smooth" });
   }, [isUpdating]);
 
   return (
-    <div className='overflow-hidden relative'>
+    <div className="overflow-hidden relative">
       {/* <Navbar/> and <Sidebar /> components*/}
       <Navbar />
-      <div className='h-[85vh] px-6 overflow-x-hidden overflow-y-scroll min-h-full'>
+      <div className="h-[85vh] px-6 overflow-x-hidden overflow-y-scroll min-h-full">
         <MainSection />
       </div>
       {selectedConversation && isConversationMember ? (
